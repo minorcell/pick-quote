@@ -2,7 +2,7 @@
   "name": "pick-quote",
   "displayName": "Pick quote",
   "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
+  "description": "一款轻巧的浏览器摘录插件，让你在浏览网页时随手收藏精彩句子、图片或链接。",
   "author": "minorcell",
   "scripts": {
     "dev": "plasmo dev",
@@ -10,6 +10,11 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
+    "jszip": "^3.10.1",
     "plasmo": "0.90.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -24,8 +29,23 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "permissions": [
+      "contextMenus",
+      "activeTab",
+      "tabs",
+      "scripting",
+      "storage"
+    ],
     "host_permissions": [
-      "https://*/*"
-    ]
+      "https://*/*",
+      "http://*/*"
+    ],
+    "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
+    },
+    "action": {
+      "default_title": "拾句"
+    }
   }
 }
