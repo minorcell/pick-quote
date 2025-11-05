@@ -3,7 +3,8 @@
 让每一次灵光乍现，都有处安放。
 一款在浏览中快速收藏信息的轻量工具。
 
-<img width="1470" height="835" alt="image" src="https://github.com/user-attachments/assets/22172799-b997-4c0c-b815-3f2d695fb3fd" />
+<img width="1470" height="835" alt="image" src="https://github.com/user-attachments/assets/0b9dfd52-eb77-4ff2-a618-5236f33b0b36" />
+
 
 ## 产品定位
 
