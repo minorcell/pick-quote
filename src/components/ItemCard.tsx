@@ -1,26 +1,26 @@
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded"
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded"
 import FormatQuoteRoundedIcon from "@mui/icons-material/FormatQuoteRounded"
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded"
 import LinkRoundedIcon from "@mui/icons-material/LinkRounded"
-import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
 import {
   Box,
   IconButton,
   Link,
+  Menu,
+  MenuItem,
   Paper,
   Stack,
   Tooltip,
-  Typography,
-  Menu,
-  MenuItem
+  Typography
 } from "@mui/material"
 import { useRef, useState } from "react"
 
+import { exportToImage } from "../lib/imageExport"
 import type { Item } from "../lib/types"
 import { prettyUrl } from "../lib/utils"
 import ShareCard from "./ShareCard"
-import { exportToImage } from "../lib/imageExport"
 
 export default function ItemCard({
   item,
@@ -61,7 +61,7 @@ export default function ItemCard({
     handleCloseMenu()
 
     // 等待主题应用
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     if (shareCardRef.current) {
       setIsExporting(true)
@@ -80,7 +80,7 @@ export default function ItemCard({
   return (
     <Paper
       variant="outlined"
-      sx={{ borderRadius: 2, p: 2, mb: 2, cursor: "pointer" }}
+      sx={{ borderRadius: 2, p: 1.5, mb: 2, cursor: "pointer" }}
       onClick={onClick}>
       <Stack
         direction="row"
@@ -94,13 +94,14 @@ export default function ItemCard({
             {new Date(item.createdAt).toLocaleString()}
           </Typography>
         </Stack>
-        <Stack direction="row" spacing={0.5} alignItems="center">
+        <Stack direction="row" spacing={0.3} alignItems="center">
           <Tooltip title="导出为图片">
             <IconButton
               size="small"
               onClick={handleExportClick}
-              disabled={isExporting}>
-              <ImageOutlinedIcon fontSize="small" />
+              disabled={isExporting}
+              sx={{ p: 0.5 }}>
+              <ImageOutlinedIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="打开来源">
@@ -109,8 +110,9 @@ export default function ItemCard({
               onClick={(e) => {
                 e.stopPropagation()
                 window.open(item.source.url, "_blank")
-              }}>
-              <LinkRoundedIcon fontSize="small" />
+              }}
+              sx={{ p: 0.5 }}>
+              <LinkRoundedIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="删除">
@@ -120,8 +122,9 @@ export default function ItemCard({
               onClick={(e) => {
                 e.stopPropagation()
                 onDelete(item.id)
-              }}>
-              <DeleteOutlineRoundedIcon fontSize="small" />
+              }}
+              sx={{ p: 0.5 }}>
+              <DeleteOutlineRoundedIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
         </Stack>
@@ -129,10 +132,13 @@ export default function ItemCard({
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleCloseMenu}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <MenuItem onClick={() => handleExportImage("dark")}>深色主题</MenuItem>
-          <MenuItem onClick={() => handleExportImage("light")}>浅色主题</MenuItem>
+          onClick={(e) => e.stopPropagation()}>
+          <MenuItem onClick={() => handleExportImage("dark")}>
+            深色主题
+          </MenuItem>
+          <MenuItem onClick={() => handleExportImage("light")}>
+            浅色主题
+          </MenuItem>
         </Menu>
       </Stack>
 
@@ -170,17 +176,21 @@ export default function ItemCard({
             </Typography>
           </Stack>
         )}
-        {item.type === "snapshot" && (
-          typeof item.content === "string" && item.content.startsWith("data:image") ? (
+        {item.type === "snapshot" &&
+          (typeof item.content === "string" &&
+          item.content.startsWith("data:image") ? (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <img src={item.content} alt={item.source.title || prettyUrl(item.source.url)} style={{ maxWidth: "100%", maxHeight: 240, borderRadius: 8 }} />
+              <img
+                src={item.content}
+                alt={item.source.title || prettyUrl(item.source.url)}
+                style={{ maxWidth: "100%", maxHeight: 240, borderRadius: 8 }}
+              />
             </Box>
           ) : (
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
               已保存长截图（合成）
             </Typography>
-          )
-        )}
+          ))}
       </Box>
 
       {/* 隐藏的分享卡片，用于导出 */}
@@ -190,8 +200,7 @@ export default function ItemCard({
           top: -10000,
           left: -10000,
           zIndex: -1
-        }}
-      >
+        }}>
         <ShareCard ref={shareCardRef} item={item} theme={selectedTheme} />
       </Box>
     </Paper>

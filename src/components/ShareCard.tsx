@@ -105,6 +105,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
                   fontWeight: 400,
                   letterSpacing: "0.05em",
                   textAlign: "justify",
+                  textIndent: "2em",
                   wordBreak: "break-word",
                   fontFamily: "'Noto Serif SC', 'Songti SC', serif"
                 }}>
