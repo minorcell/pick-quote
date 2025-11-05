@@ -1,5 +1,6 @@
-import type { Item } from "./types"
 import JSZip from "jszip"
+
+import type { Item } from "../types"
 
 function dataUrlToBlob(dataUrl: string): Blob {
   const [meta, content] = dataUrl.split(",")

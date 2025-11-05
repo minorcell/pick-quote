@@ -1,5 +1,5 @@
-import { addItem } from "./lib/db"
-import type { Item } from "./lib/types"
+import { addItem } from "./database"
+import type { Item } from "./types"
 
 // Create context menus
 chrome.runtime.onInstalled.addListener(() => {

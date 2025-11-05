@@ -24,6 +24,43 @@ pnpm build
 pnpm package
 ```
 
+## 目录结构
+
+```
+src/
+├── assets/              # 静态资源
+│   └── icon.png
+├── background.ts        # 后台脚本（Service Worker）
+├── components/          # React UI 组件
+│   ├── ItemCard.tsx    # 条目卡片组件
+│   ├── ItemDialog.tsx  # 条目详情对话框
+│   └── ShareCard.tsx   # 分享卡片组件
+├── content-scripts/     # 内容脚本
+│   └── capture.ts      # 页面内容捕获逻辑
+├── database/            # 数据库层
+│   └── index.ts        # IndexedDB 封装和操作
+├── export/              # 导出功能模块
+│   ├── index.ts        # 统一导出接口
+│   ├── imageExport.ts  # 图片卡片导出
+│   └── zipExport.ts    # ZIP 打包导出
+├── theme/               # UI 主题配置
+│   └── index.ts        # Material-UI 主题定义
+├── types/               # TypeScript 类型定义
+│   ├── assets.d.ts     # 资源文件类型声明
+│   └── index.ts        # 核心业务类型
+├── utils/               # 工具函数
+│   └── index.ts        # 哈希、URL 等工具
+└── options.tsx          # 选项页面（管理界面）
+```
+
+### 目录组织原则
+
+1. **按功能领域划分**：每个目录代表一个清晰的功能领域（数据库、导出、主题等）
+2. **扁平化结构**：避免过深的嵌套，保持代码易于定位
+3. **统一导出接口**：功能模块通过 `index.ts` 提供统一的对外接口
+4. **类型集中管理**：所有 TypeScript 类型定义集中在 `types/` 目录
+5. **命名规范**：遵循浏览器扩展最佳实践（如 `content-scripts` 而非 `contents`）
+
 ## 架构概览
 
 ### 浏览器扩展结构
@@ -31,7 +68,7 @@ pnpm package
 这是一个基于 Plasmo 框架的浏览器扩展，包含三个主要执行上下文：
 
 1. **后台脚本**（`src/background.ts`）：Service Worker，负责创建右键菜单和处理条目捕获
-2. **内容脚本**（`src/contents/capture.ts`）：注入到网页中，用于捕获选中内容的上下文，处理快捷键（Ctrl+Shift+S）
+2. **内容脚本**（`src/content-scripts/capture.ts`）：注入到网页中，用于捕获选中内容的上下文，处理快捷键（Ctrl+Shift+S）
 3. **选项页面**（`src/options.tsx`）：完整的 React 应用，用于管理已保存的条目（点击扩展图标或通过 options_ui 打开）
 
 ### 数据流
@@ -40,13 +77,13 @@ pnpm package
 用户操作（右键菜单/快捷键）
   → 内容脚本捕获上下文
   → 后台脚本接收消息
-  → 条目保存到 IndexedDB（src/lib/db.ts）
+  → 条目保存到 IndexedDB（src/database/index.ts）
   → 选项页面显示条目
 ```
 
 ### 核心数据模型
 
-所有捕获的条目遵循 `src/lib/types.ts` 中定义的 `Item` 接口：
+所有捕获的条目遵循 `src/types/index.ts` 中定义的 `Item` 接口：
 
 - **type**：条目类型 "text" | "image" | "link" | "snapshot"
 - **content**：捕获的内容（文本字符串、图片 URL 或快照的 data URL）
@@ -56,7 +93,7 @@ pnpm package
 
 ### 数据库层
 
-`src/lib/db.ts` 中的 IndexedDB 封装：
+`src/database/index.ts` 中的 IndexedDB 封装：
 
 - 数据库名：`pickquote-db`（当前版本 2）
 - 主存储：`items`，包含 type、createdAt、sourceSite、categoryId、hash 索引
@@ -67,25 +104,29 @@ pnpm package
 
 ### 导出系统
 
-两种导出机制：
+`src/export/` 目录包含两种导出机制：
 
-1. **ZIP 导出**（`src/lib/export.ts`）：将所有条目导出为 Markdown，并嵌入图片
-
+1. **ZIP 导出**（`zipExport.ts`）：将所有条目导出为 Markdown，并嵌入图片
    - 图片从 data URL 提取并保存到 `images/` 文件夹
    - Markdown 文件使用相对路径引用图片
 
-2. **图片卡片导出**（`src/lib/imageExport.ts`）：使用 html2canvas 将单个条目导出为可分享的 PNG 卡片
+2. **图片卡片导出**（`imageExport.ts`）：使用 html2canvas 将单个条目导出为可分享的 PNG 卡片
    - 由 ShareCard 组件使用，用于社交媒体分享
    - 渲染带有引文和来源署名的样式化卡片
 
+3. **统一接口**（`index.ts`）：导出模块提供统一的导出接口
+
 ### UI 主题
 
-`src/lib/theme.ts` 中的自定义 Material-UI 主题，采用"文艺风格"：
+`src/theme/index.ts` 中的自定义 Material-UI 主题，采用"文艺风格"：
 
-- 仅浅色模式，温暖的米白色背景（#faf9f7）
+**支持亮/暗双主题**，自动跟随系统设置：
+
+- **浅色模式**：温暖的米白色背景（#faf9f7）、深色文本
+- **暗色模式**：深色背景（#1a1a1a）、浅色文本
 - 衬线字体（Noto Serif SC、Songti SC）营造文艺感
 - 柔和配色：蓝灰色主色（#6b7785）、棕灰色辅色（#9c8b7a）
-- 圆角边框（12px）和柔和阴影
+- 圆角边框（12px）和自适应阴影
 - 高行高（1.8）提升可读性
 
 ### 右键菜单集成
@@ -101,7 +142,7 @@ pnpm package
 
 ### 上下文捕获
 
-当文本被选中时，`src/contents/capture.ts` 提取：
+当文本被选中时，`src/content-scripts/capture.ts` 提取：
 
 - 选中内容前后各 10 个字符
 - 包含选中内容的完整段落
@@ -111,7 +152,7 @@ pnpm package
 
 ### 去重策略
 
-条目通过内容哈希 + 源 URL 去重（见 `src/lib/db.ts:60-78`）。哈希在 `src/lib/utils.ts` 中使用简单的字符串哈希算法计算。来自同一页面的相同内容会被静默拒绝。
+条目通过内容哈希 + 源 URL 去重（见 `src/database/index.ts:60-78`）。哈希在 `src/utils/index.ts` 中使用 SHA-256 算法计算。来自同一页面的相同内容会被静默拒绝。
 
 ### 瀑布流布局
 

@@ -22,10 +22,10 @@ import { useEffect, useMemo, useState } from "react"
 import iconPng from "./assets/icon.png"
 import ItemCard from "./components/ItemCard"
 import ItemDialog from "./components/ItemDialog"
-import { deleteItem, exportItems, searchItems } from "./lib/db"
-import { toZip } from "./lib/export"
-import { createAppTheme } from "./lib/theme"
-import type { Item, SearchQuery } from "./lib/types"
+import { deleteItem, exportItems, searchItems } from "./database"
+import { toZip } from "./export"
+import { createAppTheme } from "./theme"
+import type { Item, SearchQuery } from "./types"
 
 export default function OptionsPage() {
   const [items, setItems] = useState<Item[]>([])

@@ -17,9 +17,9 @@ import {
 } from "@mui/material"
 import { useRef, useState } from "react"
 
-import { exportToImage } from "../lib/imageExport"
-import type { Item } from "../lib/types"
-import { prettyUrl } from "../lib/utils"
+import { exportToImage } from "../export"
+import type { Item } from "../types"
+import { prettyUrl } from "../utils"
 import ShareCard from "./ShareCard"
 
 export default function ItemCard({

@@ -1,8 +1,8 @@
 import { Box, Stack, Typography } from "@mui/material"
 import { forwardRef } from "react"
 
-import type { Item } from "../lib/types"
-import { prettyUrl } from "../lib/utils"
+import type { Item } from "../types"
+import { prettyUrl } from "../utils"
 
 interface ShareCardProps {
   item: Item

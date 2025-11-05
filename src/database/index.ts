@@ -1,5 +1,5 @@
-import type { Item, SearchQuery } from "./types"
-import { computeItemHash } from "./utils"
+import type { Item, SearchQuery } from "../types"
+import { computeItemHash } from "../utils"
 
 const DB_NAME = "pickquote-db"
 const DB_VERSION = 2
