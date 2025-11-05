@@ -121,7 +121,11 @@ export default function ItemCard({
           direction="row"
           spacing={0.5}
           alignItems="center"
-          sx={{ opacity: 0.6, transition: "opacity 0.2s", "&:hover": { opacity: 1 } }}>
+          sx={{
+            opacity: 0.6,
+            transition: "opacity 0.2s",
+            "&:hover": { opacity: 1 }
+          }}>
           <Tooltip title="导出为图片">
             <IconButton
               size="small"
@@ -207,8 +211,7 @@ export default function ItemCard({
               style={{
                 maxWidth: "100%",
                 maxHeight: 200,
-                borderRadius: 10,
-                boxShadow: "0 4px 12px rgba(45, 52, 54, 0.08)"
+                borderRadius: 10
               }}
             />
           </Box>
@@ -237,8 +240,7 @@ export default function ItemCard({
                 style={{
                   maxWidth: "100%",
                   maxHeight: 240,
-                  borderRadius: 10,
-                  boxShadow: "0 4px 12px rgba(45, 52, 54, 0.08)"
+                  borderRadius: 10
                 }}
               />
             </Box>

@@ -166,10 +166,16 @@ export default function ItemDialog({
             bgcolor: "transparent"
           },
           "&::-webkit-scrollbar-thumb": {
-            bgcolor: "rgba(45, 52, 54, 0.2)",
+            bgcolor: (theme) =>
+              theme.palette.mode === "light"
+                ? "rgba(45, 52, 54, 0.2)"
+                : "rgba(232, 230, 227, 0.2)",
             borderRadius: "4px",
             "&:hover": {
-              bgcolor: "rgba(45, 52, 54, 0.3)"
+              bgcolor: (theme) =>
+                theme.palette.mode === "light"
+                  ? "rgba(45, 52, 54, 0.3)"
+                  : "rgba(232, 230, 227, 0.3)"
             }
           }
         }}>
@@ -204,8 +210,7 @@ export default function ItemDialog({
                 alt={item.source.title || prettyUrl(item.source.url)}
                 style={{
                   maxWidth: "100%",
-                  borderRadius: 12,
-                  boxShadow: "0 8px 24px rgba(45, 52, 54, 0.12)"
+                  borderRadius: 12
                 }}
               />
             </Box>
@@ -231,8 +236,7 @@ export default function ItemDialog({
                   alt={item.source.title || prettyUrl(item.source.url)}
                   style={{
                     maxWidth: "100%",
-                    borderRadius: 12,
-                    boxShadow: "0 8px 24px rgba(45, 52, 54, 0.12)"
+                    borderRadius: 12
                   }}
                 />
               </Box>

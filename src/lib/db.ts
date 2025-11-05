@@ -26,7 +26,7 @@ function openDb(): Promise<IDBDatabase> {
           if (store.indexNames && (store.indexNames as any).contains?.("tags")) {
             store.deleteIndex("tags")
           }
-        } catch {}
+        } catch { }
       }
       // stub other stores for future
       if (!db.objectStoreNames.contains("categories")) {
