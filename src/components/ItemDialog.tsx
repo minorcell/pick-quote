@@ -41,7 +41,6 @@ export default function ItemDialog({
   const [isExporting, setIsExporting] = useState(false)
 
   if (!item) return null
-  const created = new Date(item.createdAt).toLocaleString()
   const icon =
     item.type === "text" ? (
       <FormatQuoteRoundedIcon fontSize="small" />
@@ -87,11 +86,14 @@ export default function ItemDialog({
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-          height: "80vh",
-          display: "flex"
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 3,
+            height: "85vh",
+            display: "flex",
+            bgcolor: "background.paper"
+          }
         }
       }}>
       <DialogTitle
@@ -99,12 +101,24 @@ export default function ItemDialog({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: 1
+          gap: 1,
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          py: 2.5,
+          px: 3
         }}>
-        <Stack direction="row" spacing={1} alignItems="center">
-          {icon}
-          <Typography variant="subtitle1" component="span">
-            {item.type.toUpperCase()} · {created}
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <Box sx={{ color: "text.secondary", opacity: 0.7 }}>{icon}</Box>
+          <Typography
+            variant="subtitle1"
+            component="span"
+            sx={{ fontSize: "0.9rem", letterSpacing: "0.05em" }}>
+            {item.type.toUpperCase()} ·{" "}
+            {new Date(item.createdAt).toLocaleDateString("zh-CN", {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            })}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.5} alignItems="center">
@@ -137,42 +151,73 @@ export default function ItemDialog({
         </Menu>
       </DialogTitle>
       <DialogContent
-        dividers
         sx={{
           flex: 1,
           overflowY: "auto",
-          p: 2,
+          px: 4,
+          py: 4,
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
+          bgcolor: "background.paper",
+          "&::-webkit-scrollbar": {
+            width: "8px"
+          },
+          "&::-webkit-scrollbar-track": {
+            bgcolor: "transparent"
+          },
+          "&::-webkit-scrollbar-thumb": {
+            bgcolor: "rgba(45, 52, 54, 0.2)",
+            borderRadius: "4px",
+            "&:hover": {
+              bgcolor: "rgba(45, 52, 54, 0.3)"
+            }
+          }
         }}>
-        <Box sx={{ flex: 1 }}>
+        <Box
+          sx={{
+            flex: 1,
+            maxWidth: "680px",
+            mx: "auto",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center"
+          }}>
           {item.type === "text" && (
             <Typography
               variant="body1"
               sx={{
                 whiteSpace: "pre-wrap",
-                lineHeight: 1.8,
-                textIndent: "2em"
+                lineHeight: 2,
+                textIndent: "2em",
+                fontSize: "1.05rem",
+                color: "text.primary",
+                textAlign: "justify"
               }}>
               {item.content}
             </Typography>
           )}
           {item.type === "image" && (
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
               <img
                 src={item.content}
                 alt={item.source.title || prettyUrl(item.source.url)}
-                style={{ maxWidth: "100%", borderRadius: 8 }}
+                style={{
+                  maxWidth: "100%",
+                  borderRadius: 12,
+                  boxShadow: "0 8px 24px rgba(45, 52, 54, 0.12)"
+                }}
               />
             </Box>
           )}
           {item.type === "link" && (
-            <Typography variant="body1">
+            <Typography variant="body1" sx={{ fontSize: "1rem" }}>
               <Link
                 href={item.content}
                 target="_blank"
                 rel="noreferrer"
-                underline="hover">
+                underline="hover"
+                sx={{ color: "primary.main" }}>
                 {prettyUrl(item.content)}
               </Link>
             </Typography>
@@ -180,44 +225,100 @@ export default function ItemDialog({
           {item.type === "snapshot" &&
             (typeof item.content === "string" &&
             item.content.startsWith("data:image") ? (
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
                 <img
                   src={item.content}
                   alt={item.source.title || prettyUrl(item.source.url)}
-                  style={{ maxWidth: "100%", borderRadius: 8 }}
+                  style={{
+                    maxWidth: "100%",
+                    borderRadius: 12,
+                    boxShadow: "0 8px 24px rgba(45, 52, 54, 0.12)"
+                  }}
                 />
               </Box>
             ) : (
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              <Typography
+                variant="body2"
+                sx={{ color: "text.secondary", fontSize: "0.95rem" }}>
                 长截图（合成）已保存
               </Typography>
             ))}
           {item.context?.paragraph && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+            <Box
+              sx={{
+                mt: 4,
+                pt: 3,
+                borderTop: "1px solid",
+                borderColor: "divider"
+              }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.secondary",
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.05em",
+                  mb: 1.5,
+                  display: "block"
+                }}>
                 所在段落
               </Typography>
-              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  whiteSpace: "pre-wrap",
+                  lineHeight: 1.9,
+                  color: "text.secondary",
+                  fontSize: "0.9rem"
+                }}>
                 {item.context.paragraph}
               </Typography>
             </Box>
           )}
         </Box>
-        <Box sx={{ mt: 2, pt: 2, borderColor: "divider" }}>
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            来源：
-            <Link
-              href={item.source.url}
-              target="_blank"
-              rel="noreferrer"
-              underline="hover">
-              {item.source.title || prettyUrl(item.source.url)}
-            </Link>
-          </Typography>
-        </Box>
       </DialogContent>
-      <DialogActions sx={{ px: 2, py: 1.5 }}>
-        <Button onClick={onClose}>关闭</Button>
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2,
+          borderTop: "1px solid",
+          borderColor: "divider",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+        <Box
+          sx={{
+            flex: 1,
+            mr: 2,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+          }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              fontSize: "0.75rem",
+              display: "inline"
+            }}>
+            来源：
+          </Typography>
+          <Link
+            href={item.source.url}
+            target="_blank"
+            rel="noreferrer"
+            underline="hover"
+            sx={{
+              color: "primary.main",
+              ml: 0.5,
+              fontSize: "0.75rem"
+            }}>
+            {item.source.title || prettyUrl(item.source.url)}
+          </Link>
+        </Box>
+        <Button onClick={onClose} sx={{ px: 3, flexShrink: 0 }}>
+          关闭
+        </Button>
       </DialogActions>
 
       {/* 隐藏的分享卡片，用于导出 */}

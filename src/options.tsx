@@ -53,18 +53,6 @@ export default function OptionsPage() {
     onSearch()
   }
 
-  // removed markdown/csv export logic; simplified to direct ZIP export
-
-  function download(filename: string, content: string) {
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
-  }
-
   useEffect(() => {
     const COMPACT_THRESHOLD = 120
     const EXPAND_THRESHOLD = 60
@@ -80,59 +68,86 @@ export default function OptionsPage() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
+  const headerHeight = 52
+
   return (
     <ThemeProvider theme={theme}>
-      <Container sx={{ py: 2 }} maxWidth="md">
+      <Container sx={{ py: 4 }} maxWidth="md">
         <Box
           sx={{
             position: "sticky",
             top: 0,
             zIndex: 1100,
-            bgcolor: "background.default",
-            transition: "transform 300ms ease, opacity 300ms ease",
-            minHeight: 64,
+            bgcolor: "background.paper",
+            transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+            height: headerHeight,
             display: "flex",
             alignItems: "center"
           }}>
           <Stack
             direction={compactHeader ? "row" : "column"}
-            spacing={compactHeader ? 1 : 0}
-            alignItems={compactHeader ? "center" : "flex-start"}>
+            spacing={compactHeader ? 1.5 : 0.5}
+            alignItems={compactHeader ? "center" : "flex-start"}
+            sx={{ width: "100%" }}>
             <Typography
               variant="h5"
-              sx={{ transition: "transform 300ms ease, opacity 300ms ease" }}>
-              拾句 · 管理页
+              sx={{
+                transition: "all 300ms ease",
+                fontSize: "1.75rem",
+                fontWeight: 400,
+                letterSpacing: "0.08em"
+              }}>
+              拾句
             </Typography>
             <Typography
-              variant={compactHeader ? "caption" : "body2"}
+              variant="caption"
               sx={{
                 color: "text.secondary",
-                transition: "transform 300ms ease, opacity 300ms ease",
+                transition: "all 300ms ease",
                 whiteSpace: compactHeader ? "nowrap" : "normal",
                 textOverflow: compactHeader ? "ellipsis" : "unset",
-                overflow: compactHeader ? "hidden" : "visible"
+                fontSize: "0.75rem",
+                maxWidth: compactHeader ? "none" : "80%"
               }}>
-              灵感一闪，即可拾取，汇聚成属于你的知识与灵感片段集。
+              灵感一闪，即可拾取，汇聚成属于你的知识与灵感片段集
             </Typography>
           </Stack>
         </Box>
         <Box
           sx={{
             position: "sticky",
-            top: 64,
+            top: headerHeight,
             zIndex: 1050,
-            py: 1,
-            bgcolor: "background.default"
+            py: 2,
+            bgcolor: "background.paper",
+            transition: "top 300ms cubic-bezier(0.4, 0, 0.2, 1)"
           }}>
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1.5}>
             <TextField
               placeholder="搜索关键词"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               size="small"
               fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "background.paper",
+                  borderRadius: 2,
+                  "&:hover fieldset": {
+                    borderColor: "primary.light"
+                  }
+                }
+              }}
             />
-            <FormControl size="small" sx={{ minWidth: 120 }}>
+            <FormControl
+              size="small"
+              sx={{
+                minWidth: 120,
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "background.paper",
+                  borderRadius: 2
+                }
+              }}>
               <InputLabel id="type-label">类型</InputLabel>
               <Select
                 labelId="type-label"
@@ -148,6 +163,11 @@ export default function OptionsPage() {
             </FormControl>
             <Button
               variant="outlined"
+              sx={{
+                borderRadius: 2,
+                px: 2.5,
+                minWidth: 80
+              }}
               onClick={async () => {
                 const all = await exportItems()
                 const blob = await toZip(all)
@@ -162,9 +182,14 @@ export default function OptionsPage() {
             </Button>
           </Stack>
         </Box>
-        <Box sx={{ columnCount: { xs: 1, sm: 2, md: 3 }, columnGap: 2 }}>
+        <Box
+          sx={{
+            columnCount: { xs: 1, sm: 2, md: 3 },
+            columnGap: 2.5,
+            mt: 2
+          }}>
           {items.map((it) => (
-            <Box key={it.id} sx={{ breakInside: "avoid", mb: 2 }}>
+            <Box key={it.id} sx={{ breakInside: "avoid" }}>
               <ItemCard
                 item={it}
                 onDelete={onDelete}
@@ -181,27 +206,41 @@ export default function OptionsPage() {
         <Box
           component="footer"
           sx={{
-            mt: 4,
-            py: 2,
+            mt: 6,
+            py: 3,
             color: "text.secondary",
-            borderTop: "1px solid #eee"
+            borderTop: "1px solid",
+            borderColor: "divider"
           }}>
           <Stack
             direction="row"
-            spacing={1}
+            spacing={1.5}
             alignItems="center"
-            sx={{ mb: 0.5 }}>
+            sx={{ mb: 1 }}>
             <Avatar
               src={iconPng}
               alt="拾句"
-              sx={{ width: 24, height: 24, boxShadow: 1, opacity: 0.95 }}
+              sx={{
+                width: 28,
+                height: 28,
+                boxShadow: 1,
+                opacity: 0.9
+              }}
             />
-            <Typography variant="caption" sx={{ fontStyle: "italic" }}>
+            <Typography
+              variant="caption"
+              sx={{
+                fontStyle: "italic",
+                fontSize: "0.8rem",
+                letterSpacing: "0.03em"
+              }}>
               拾句 · 灵感库 — 数据仅存本地 IndexedDB · v0.1
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.5} alignItems="center">
-            <Typography variant="caption">开源地址：</Typography>
+            <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+              开源地址：
+            </Typography>
             <Tooltip title="GitHub: minorcell/pick-quote">
               <IconButton
                 size="small"
@@ -209,7 +248,8 @@ export default function OptionsPage() {
                 href="https://github.com/minorcell/pick-quote"
                 target="_blank"
                 rel="noreferrer"
-                aria-label="GitHub repository">
+                aria-label="GitHub repository"
+                sx={{ ml: 0.5 }}>
                 <GitHubIcon fontSize="small" />
               </IconButton>
             </Tooltip>
