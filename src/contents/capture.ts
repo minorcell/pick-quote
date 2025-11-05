@@ -1,5 +1,4 @@
 import type { PlasmoCSConfig } from "plasmo"
-import { captureFullPage, downloadScreenshot } from "~lib/longScreenshot"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://*/*", "http://*/*"],
@@ -80,24 +79,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     )
     return true
   }
-
-  // Handle long screenshot request
-  if (msg?.kind === "capture-long-screenshot") {
-    showToast("正在生成长截图...")
-    captureFullPage()
-      .then((dataUrl) => {
-        const filename = `long-screenshot-${document.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-${Date.now()}.png`
-        downloadScreenshot(dataUrl, filename)
-        showToast("长截图已下载")
-        sendResponse({ ok: true })
-      })
-      .catch((error) => {
-        console.error("Failed to capture long screenshot:", error)
-        showToast("长截图生成失败")
-        sendResponse({ ok: false, error: String(error) })
-      })
-    return true
-  }
+  // 长截图暂未实现
 })
 
 function deriveContext() {
