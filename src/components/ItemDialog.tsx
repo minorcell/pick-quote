@@ -3,7 +3,6 @@ import FormatQuoteRoundedIcon from "@mui/icons-material/FormatQuoteRounded"
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded"
 import LinkRoundedIcon from "@mui/icons-material/LinkRounded"
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded"
-import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded"
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded"
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
 import { useRef, useState } from "react"
@@ -15,7 +14,7 @@ import { exportToImage } from "../lib/imageExport"
 export default function ItemDialog({ item, open, onClose }: { item: Item | null; open: boolean; onClose: () => void }) {
   const shareCardRef = useRef<HTMLDivElement>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [selectedTheme, setSelectedTheme] = useState<"gradient1" | "gradient2" | "gradient3" | "dark" | "light">("gradient1")
+  const [selectedTheme, setSelectedTheme] = useState<"dark" | "light">("dark")
   const [isExporting, setIsExporting] = useState(false)
 
   if (!item) return null
@@ -85,7 +84,7 @@ export default function ItemDialog({ item, open, onClose }: { item: Item | null;
           </Tooltip>
           <Tooltip title="打开来源">
             <IconButton size="small" onClick={() => window.open(item.source.url, "_blank") }>
-              <OpenInNewRoundedIcon fontSize="small" />
+              <LinkRoundedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
           <Tooltip title="复制链接">
@@ -99,9 +98,6 @@ export default function ItemDialog({ item, open, onClose }: { item: Item | null;
           open={Boolean(anchorEl)}
           onClose={handleCloseMenu}
         >
-          <MenuItem onClick={() => handleExportImage("gradient1")}>紫色渐变</MenuItem>
-          <MenuItem onClick={() => handleExportImage("gradient2")}>粉色渐变</MenuItem>
-          <MenuItem onClick={() => handleExportImage("gradient3")}>蓝色渐变</MenuItem>
           <MenuItem onClick={() => handleExportImage("dark")}>深色主题</MenuItem>
           <MenuItem onClick={() => handleExportImage("light")}>浅色主题</MenuItem>
         </Menu>

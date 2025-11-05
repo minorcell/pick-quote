@@ -5,7 +5,7 @@ import { prettyUrl } from "../lib/utils"
 
 interface ShareCardProps {
   item: Item
-  theme?: "gradient1" | "gradient2" | "gradient3" | "dark" | "light"
+  theme?: "dark" | "light"
 }
 
 /**
@@ -13,27 +13,9 @@ interface ShareCardProps {
  * 支持多种主题，优雅的排版设计
  */
 const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
-  ({ item, theme = "gradient1" }, ref) => {
+  ({ item, theme = "dark" }, ref) => {
     // 主题配色方案
     const themes = {
-      gradient1: {
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        text: "#ffffff",
-        secondary: "rgba(255, 255, 255, 0.85)",
-        accent: "rgba(255, 255, 255, 0.3)"
-      },
-      gradient2: {
-        background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-        text: "#ffffff",
-        secondary: "rgba(255, 255, 255, 0.85)",
-        accent: "rgba(255, 255, 255, 0.3)"
-      },
-      gradient3: {
-        background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-        text: "#ffffff",
-        secondary: "rgba(255, 255, 255, 0.85)",
-        accent: "rgba(255, 255, 255, 0.3)"
-      },
       dark: {
         background: "#1a1a2e",
         text: "#eee",

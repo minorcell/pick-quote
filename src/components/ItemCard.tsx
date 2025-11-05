@@ -3,7 +3,6 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded"
 import FormatQuoteRoundedIcon from "@mui/icons-material/FormatQuoteRounded"
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded"
 import LinkRoundedIcon from "@mui/icons-material/LinkRounded"
-import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded"
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
 import {
   Box,
@@ -34,7 +33,7 @@ export default function ItemCard({
 }) {
   const shareCardRef = useRef<HTMLDivElement>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [selectedTheme, setSelectedTheme] = useState<"gradient1" | "gradient2" | "gradient3" | "dark" | "light">("gradient1")
+  const [selectedTheme, setSelectedTheme] = useState<"dark" | "light">("dark")
   const [isExporting, setIsExporting] = useState(false)
 
   const icon =
@@ -111,7 +110,7 @@ export default function ItemCard({
                 e.stopPropagation()
                 window.open(item.source.url, "_blank")
               }}>
-              <OpenInNewRoundedIcon fontSize="small" />
+              <LinkRoundedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
           <Tooltip title="删除">
@@ -132,9 +131,6 @@ export default function ItemCard({
           onClose={handleCloseMenu}
           onClick={(e) => e.stopPropagation()}
         >
-          <MenuItem onClick={() => handleExportImage("gradient1")}>紫色渐变</MenuItem>
-          <MenuItem onClick={() => handleExportImage("gradient2")}>粉色渐变</MenuItem>
-          <MenuItem onClick={() => handleExportImage("gradient3")}>蓝色渐变</MenuItem>
           <MenuItem onClick={() => handleExportImage("dark")}>深色主题</MenuItem>
           <MenuItem onClick={() => handleExportImage("light")}>浅色主题</MenuItem>
         </Menu>
