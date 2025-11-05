@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="拾句 - 轻量级浏览器扩展，快速收藏灵感片段，支持文本、图片、链接和页面快照，所有数据仅存储在本地">
+    <meta name="keywords" content="浏览器扩展,收藏工具,灵感收集,网页剪藏,阅读工具">
+    <title>拾句 - 快速收藏网页灵感的浏览器扩展</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/icon.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="assets/icon.png" sizes="64x64">
+    <link rel="apple-touch-icon" href="assets/icon.png">
+
+    <!-- Preconnect to Google Fonts for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts for fallback -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="nav-brand">
+                <svg class="logo" viewBox="0 0 24 24" width="28" height="28">
+                    <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    <circle cx="8" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="16" cy="12" r="1" fill="currentColor"/>
+                </svg>
+                <span class="brand-text">拾句</span>
+            </a>
+
+            <div class="nav-menu">
+                <a href="#features" class="nav-link">功能特点</a>
+                <a href="#how-it-works" class="nav-link">使用方式</a>
+                <a href="#download" class="nav-link">立即安装</a>
+                <a href="https://github.com/minorcell/pick-quote" target="_blank" rel="noopener noreferrer" class="github-btn" aria-label="访问 GitHub 项目">
+                    <svg viewBox="0 0 24 24" width="22" height="22">
+                        <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <div class="hero-brand-icon">
+                    <img src="assets/icon.png" alt="拾句 Logo" class="brand-logo">
+                </div>
+                <h1 class="hero-title">
+                    让每一次灵感<br>
+                    <span class="gradient-text">都被妥善收藏</span>
+                </h1>
+                <p class="hero-subtitle">
+                    轻量级浏览器扩展，助您快速捕捉网页中的文字、图片与链接。<br>
+                    所有数据仅存储在本地，保护您的隐私与创作灵感。
+                </p>
+                <div class="hero-actions">
+                    <a href="#download" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                        </svg>
+                        立即安装
+                    </a>
+                    <a href="#features" class="btn btn-outline">
+                        了解更多
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">大功能特色</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">本地存储</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    <div class="card-text">
+                        <div class="card-line"></div>
+                        <div class="card-line short"></div>
+                    </div>
+                </div>
+                <div class="floating-card card-2">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M8.5,13.5L11,16.51L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"/>
+                    </svg>
+                    <div class="image-placeholder">
+                        <svg viewBox="0 0 24 24" width="40" height="40">
+                            <path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,3.11 4.9,2 6,2M6.7,11.3L9,14.6L10.6,13L8.3,10.7L11,8L9.5,6.5L6.7,11.3M15,11V15H11V11H15Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="floating-card card-3">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7A3.9,3.9 0 0,1 3.9,12M17,12A5,5 0 0,1 12,17H8V15H12A3,3 0 0,0 15,12A3,3 0 0,0 12,9H17V12M7.83,14C7.42,14 7,14.21 6.73,14.5C6.64,14.57 6.57,14.65 6.5,14.73C6.21,15.03 6.16,15.47 6.35,15.85C6.53,16.24 6.86,16.46 7.23,16.46C7.41,16.46 7.58,16.41 7.74,16.32C8.08,16.08 8.23,15.6 8.07,15.19L7.83,14Z"/>
+                    </svg>
+                    <div class="link-text">https://example.com</div>
+                </div>
+                <div class="floating-card card-4">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M8.5,13.5L11,16.51L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"/>
+                    </svg>
+                    <div class="snapshot-preview">
+                        <div class="snapshot-bar"></div>
+                        <div class="snapshot-content">
+                            <div class="snapshot-line"></div>
+                            <div class="snapshot-line"></div>
+                            <div class="snapshot-line short"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-bg decoration"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">功能特点</h2>
+                <p class="section-subtitle">简单、高效、安全的灵感收集体验</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #6b7785, #8a96a3);">
+                        <svg viewBox="0 0 24 24" width="32" height="32">
+                            <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">文本收藏</h3>
+                    <p class="feature-description">
+                        快速保存网页中的精选文本，保留前后文语境，让每一句话都有其背景与意义。
+                    </p>
+                    <div class="feature-highlight">
+                        <span>✓ 自动提取上下文</span>
+                        <span>✓ 智能去重</span>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #9c8b7a, #b5a598);">
+                        <svg viewBox="0 0 24 24" width="32" height="32">
+                            <path fill="currentColor" d="M8.5,13.5L11,16.51L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">图片保存</h3>
+                    <p class="feature-description">
+                        保存心仪的图片，自动记录来源网址，让每一张图片都能追溯到它的出处。
+                    </p>
+                    <div class="feature-highlight">
+                        <span>✓ 保留来源信息</span>
+                        <span>✓ 快速预览</span>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #6b7785, #9c8b7a);">
+                        <svg viewBox="0 0 24 24" width="32" height="32">
+                            <path fill="currentColor" d="M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7A3.9,3.9 0 0,1 3.9,12M17,12A5,5 0 0,1 12,17H8V15H12A3,3 0 0,0 15,12A3,3 0 0,0 12,9H17V12M7.83,14C7.42,14 7,14.21 6.73,14.5C6.64,14.57 6.57,14.65 6.5,14.73C6.21,15.03 6.16,15.47 6.35,15.85C6.53,16.24 6.86,16.46 7.23,16.46C7.41,16.46 7.58,16.41 7.74,16.32C8.08,16.08 8.23,15.6 8.07,15.19L7.83,14Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">链接管理</h3>
+                    <p class="feature-description">
+                        一键保存感兴趣的链接，构建您的个人知识库，让好内容不再遗失。
+                    </p>
+                    <div class="feature-highlight">
+                        <span>✓ 快速访问</span>
+                        <span>✓ 组织整理</span>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #9c8b7a, #6b7785);">
+                        <svg viewBox="0 0 24 24" width="32" height="32">
+                            <path fill="currentColor" d="M8.5,13.5L11,16.51L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">页面快照</h3>
+                    <p class="feature-description">
+                        捕获当前页面的可视区域，保存完整的视觉体验，让灵感以最直观的方式呈现。
+                    </p>
+                    <div class="feature-highlight">
+                        <span>✓ 高清截图</span>
+                        <span>✓ 完整上下文</span>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #6b7785, #9c8b7a);">
+                        <svg viewBox="0 0 24 24" width="32" height="32">
+                            <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M8,12V14H16V12H8M8,16V18H13V16H8Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">导出分享</h3>
+                    <p class="feature-description">
+                        支持导出为精美图片卡片和 Markdown 文档，轻松分享您的灵感收藏，或用于创作参考。
+                    </p>
+                    <div class="feature-highlight">
+                        <span>✓ 图片卡片导出</span>
+                        <span>✓ Markdown 文档</span>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #9c8b7a, #b5a598);">
+                        <svg viewBox="0 0 24 24" width="32" height="32">
+                            <path fill="currentColor" d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">文艺设计</h3>
+                    <p class="feature-description">
+                        采用衬线字体与暖色调打造文艺质感，亮/暗双主题自动切换，优雅而舒适的使用体验。
+                    </p>
+                    <div class="feature-highlight">
+                        <span>✓ 衬线字体</span>
+                        <span>✓ 双主题切换</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">如何使用</h2>
+                <p class="section-subtitle">三步开始您的灵感收藏之旅</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3 class="step-title">安装扩展</h3>
+                        <p class="step-description">
+                            从 Chrome Web Store 下载并安装拾句扩展，完成基础设置。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="step-divider"></div>
+
+                <div class="step-item">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3 class="step-title">选中心仪内容</h3>
+                        <p class="step-description">
+                            在网页中选中想要收藏的文本、图片或链接，右键点击"拾句"菜单。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="step-divider"></div>
+
+                <div class="step-item">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3 class="step-title">自动保存收藏</h3>
+                        <p class="step-description">
+                            内容自动保存到本地数据库，同时保留来源、时间等详细信息。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <div class="container">
+            <div class="download-card">
+                <div class="download-content">
+                    <h2 class="download-title">开始使用拾句</h2>
+                    <p class="download-subtitle">
+                        完全免费的浏览器扩展，支持 Chrome、Edge 等基于 Chromium 的浏览器。
+                        所有数据仅存储在您的本地设备上。
+                    </p>
+                    <div class="download-features">
+                        <div class="download-feature">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                            </svg>
+                            <span>永久免费</span>
+                        </div>
+                        <div class="download-feature">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                            </svg>
+                            <span>隐私保护</span>
+                        </div>
+                        <div class="download-feature">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                            </svg>
+                            <span>轻量快速</span>
+                        </div>
+                    </div>
+                    <div class="download-actions">
+                        <a href="#" class="btn btn-primary btn-large">
+                            <svg viewBox="0 0 24 24" width="22" height="22">
+                                <path fill="currentColor" d="M17,14H19V17H22V19H19V22H17V19H14V17H17V14M13,3A9,9 0 0,0 4,12H1L4.96,16.03L9,12H6.7A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3"/>
+                            </svg>
+                            Chrome 应用商店（即将上线）
+                        </a>
+                        <p class="download-note">或下载安装包手动安装</p>
+                    </div>
+                </div>
+                <div class="download-visual">
+                    <div class="extension-preview">
+                        <div class="preview-header">
+                            <div class="preview-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="preview-brand">
+                                <img src="assets/icon.png" alt="拾句图标" class="preview-logo">
+                                <span class="preview-brand-text">拾句</span>
+                            </div>
+                        </div>
+                        <div class="preview-content">
+                            <div class="preview-title">
+                                <div class="title-bar"></div>
+                                <div class="title-bar short"></div>
+                            </div>
+                            <div class="preview-items">
+                                <div class="preview-item">
+                                    <div class="item-icon"></div>
+                                    <div class="item-content">
+                                        <div class="content-line"></div>
+                                        <div class="content-line short"></div>
+                                    </div>
+                                </div>
+                                <div class="preview-item">
+                                    <div class="item-icon gradient"></div>
+                                    <div class="item-content">
+                                        <div class="content-line"></div>
+                                        <div class="content-line short"></div>
+                                    </div>
+                                </div>
+                                <div class="preview-item">
+                                    <div class="item-icon"></div>
+                                    <div class="item-content">
+                                        <div class="content-line"></div>
+                                        <div class="content-line short"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simple Footer -->
+    <footer class="simple-footer">
+        <div class="container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <span class="footer-title">拾句</span>
+                    <p class="footer-desc">轻量级浏览器扩展，让灵感收集变得简单而优雅。</p>
+                </div>
+                <a href="https://github.com/minorcell/pick-quote" target="_blank" rel="noopener noreferrer" class="footer-repo-link">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"/>
+                    </svg>
+                    <span>GitHub</span>
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">© <span id="currentYear">2025</span> 拾句 Pick Quote. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
