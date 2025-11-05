@@ -4,6 +4,7 @@ import FormatQuoteRoundedIcon from "@mui/icons-material/FormatQuoteRounded"
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded"
 import LinkRoundedIcon from "@mui/icons-material/LinkRounded"
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded"
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
 import {
   Box,
   IconButton,
@@ -11,11 +12,16 @@ import {
   Paper,
   Stack,
   Tooltip,
-  Typography
+  Typography,
+  Menu,
+  MenuItem
 } from "@mui/material"
+import { useRef, useState } from "react"
 
 import type { Item } from "../lib/types"
 import { prettyUrl } from "../lib/utils"
+import ShareCard from "./ShareCard"
+import { exportToImage } from "../lib/imageExport"
 
 export default function ItemCard({
   item,
@@ -26,6 +32,11 @@ export default function ItemCard({
   onDelete: (id: string) => void
   onClick?: () => void
 }) {
+  const shareCardRef = useRef<HTMLDivElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [selectedTheme, setSelectedTheme] = useState<"gradient1" | "gradient2" | "gradient3" | "dark" | "light">("gradient1")
+  const [isExporting, setIsExporting] = useState(false)
+
   const icon =
     item.type === "text" ? (
       <FormatQuoteRoundedIcon fontSize="small" />
@@ -36,6 +47,36 @@ export default function ItemCard({
     ) : (
       <ArticleRoundedIcon fontSize="small" />
     )
+
+  const handleExportClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null)
+  }
+
+  const handleExportImage = async (theme: typeof selectedTheme) => {
+    setSelectedTheme(theme)
+    handleCloseMenu()
+
+    // 等待主题应用
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    if (shareCardRef.current) {
+      setIsExporting(true)
+      try {
+        const filename = `pickquote-${item.id.slice(0, 8)}-${Date.now()}`
+        await exportToImage(shareCardRef.current, filename)
+      } catch (error) {
+        console.error("导出图片失败:", error)
+        alert("导出图片失败，请重试")
+      } finally {
+        setIsExporting(false)
+      }
+    }
+  }
 
   return (
     <Paper
@@ -55,6 +96,14 @@ export default function ItemCard({
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.5} alignItems="center">
+          <Tooltip title="导出为图片">
+            <IconButton
+              size="small"
+              onClick={handleExportClick}
+              disabled={isExporting}>
+              <ImageOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="打开来源">
             <IconButton
               size="small"
@@ -77,6 +126,18 @@ export default function ItemCard({
             </IconButton>
           </Tooltip>
         </Stack>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleCloseMenu}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <MenuItem onClick={() => handleExportImage("gradient1")}>紫色渐变</MenuItem>
+          <MenuItem onClick={() => handleExportImage("gradient2")}>粉色渐变</MenuItem>
+          <MenuItem onClick={() => handleExportImage("gradient3")}>蓝色渐变</MenuItem>
+          <MenuItem onClick={() => handleExportImage("dark")}>深色主题</MenuItem>
+          <MenuItem onClick={() => handleExportImage("light")}>浅色主题</MenuItem>
+        </Menu>
       </Stack>
 
       <Box sx={{ mb: 1 }}>
@@ -124,6 +185,18 @@ export default function ItemCard({
             </Typography>
           )
         )}
+      </Box>
+
+      {/* 隐藏的分享卡片，用于导出 */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: -10000,
+          left: -10000,
+          zIndex: -1
+        }}
+      >
+        <ShareCard ref={shareCardRef} item={item} theme={selectedTheme} />
       </Box>
     </Paper>
   )
