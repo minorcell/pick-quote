@@ -1,14 +1,23 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack, Typography, Link, Box, IconButton, Tooltip } from "@mui/material"
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack, Typography, Link, Box, IconButton, Tooltip, Menu, MenuItem } from "@mui/material"
 import FormatQuoteRoundedIcon from "@mui/icons-material/FormatQuoteRounded"
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded"
 import LinkRoundedIcon from "@mui/icons-material/LinkRounded"
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded"
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded"
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded"
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined"
+import { useRef, useState } from "react"
 import type { Item } from "../lib/types"
 import { prettyUrl } from "../lib/utils"
+import ShareCard from "./ShareCard"
+import { exportToImage } from "../lib/imageExport"
 
 export default function ItemDialog({ item, open, onClose }: { item: Item | null; open: boolean; onClose: () => void }) {
+  const shareCardRef = useRef<HTMLDivElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [selectedTheme, setSelectedTheme] = useState<"gradient1" | "gradient2" | "gradient3" | "dark" | "light">("gradient1")
+  const [isExporting, setIsExporting] = useState(false)
+
   if (!item) return null
   const created = new Date(item.createdAt).toLocaleString()
   const icon =
@@ -19,6 +28,35 @@ export default function ItemDialog({ item, open, onClose }: { item: Item | null;
       : item.type === "link"
       ? <LinkRoundedIcon fontSize="small" />
       : <ArticleRoundedIcon fontSize="small" />
+
+  const handleExportClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null)
+  }
+
+  const handleExportImage = async (theme: typeof selectedTheme) => {
+    setSelectedTheme(theme)
+    handleCloseMenu()
+
+    // 等待主题应用
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    if (shareCardRef.current) {
+      setIsExporting(true)
+      try {
+        const filename = `pickquote-${item.id.slice(0, 8)}-${Date.now()}`
+        await exportToImage(shareCardRef.current, filename)
+      } catch (error) {
+        console.error("导出图片失败:", error)
+        alert("导出图片失败，请重试")
+      } finally {
+        setIsExporting(false)
+      }
+    }
+  }
   return (
     <Dialog
       open={open}
@@ -40,6 +78,11 @@ export default function ItemDialog({ item, open, onClose }: { item: Item | null;
           </Typography>
         </Stack>
         <Stack direction="row" spacing={0.5} alignItems="center">
+          <Tooltip title="导出为图片">
+            <IconButton size="small" onClick={handleExportClick} disabled={isExporting}>
+              <ImageOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="打开来源">
             <IconButton size="small" onClick={() => window.open(item.source.url, "_blank") }>
               <OpenInNewRoundedIcon fontSize="small" />
@@ -51,6 +94,17 @@ export default function ItemDialog({ item, open, onClose }: { item: Item | null;
             </IconButton>
           </Tooltip>
         </Stack>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleCloseMenu}
+        >
+          <MenuItem onClick={() => handleExportImage("gradient1")}>紫色渐变</MenuItem>
+          <MenuItem onClick={() => handleExportImage("gradient2")}>粉色渐变</MenuItem>
+          <MenuItem onClick={() => handleExportImage("gradient3")}>蓝色渐变</MenuItem>
+          <MenuItem onClick={() => handleExportImage("dark")}>深色主题</MenuItem>
+          <MenuItem onClick={() => handleExportImage("light")}>浅色主题</MenuItem>
+        </Menu>
       </DialogTitle>
       <DialogContent dividers sx={{ flex: 1, overflowY: "auto", p: 2 }}>
         <Stack spacing={2}>
@@ -99,6 +153,18 @@ export default function ItemDialog({ item, open, onClose }: { item: Item | null;
       <DialogActions sx={{ px: 2, py: 1.5 }}>
         <Button onClick={onClose}>关闭</Button>
       </DialogActions>
+
+      {/* 隐藏的分享卡片，用于导出 */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: -10000,
+          left: -10000,
+          zIndex: -1
+        }}
+      >
+        <ShareCard ref={shareCardRef} item={item} theme={selectedTheme} />
+      </Box>
     </Dialog>
   )
 }
