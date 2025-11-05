@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({ id: "pickquote-image", title: "拾句 → 保存带来源图片", contexts: ["image"] })
   chrome.contextMenus.create({ id: "pickquote-link", title: "拾句 → 仅存链接", contexts: ["link"] })
   chrome.contextMenus.create({ id: "pickquote-snapshot-image", title: "拾句 → 页面截图（可视区域）", contexts: ["page"] })
-  // 长截图暂时移除
+  chrome.contextMenus.create({ id: "pickquote-long-screenshot", title: "拾句 → 长截图（完整网页）", contexts: ["page"] })
 })
 
 // Handle menu clicks
@@ -75,10 +75,20 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       await addItem(item)
     })
   }
+
+  if (info.menuItemId === "pickquote-long-screenshot") {
+    // Request content script to capture and download long screenshot
+    if (!tab?.id) return
+    chrome.tabs.sendMessage(tab.id, { kind: "capture-long-screenshot" }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.warn("Failed to trigger long screenshot:", chrome.runtime.lastError.message)
+      }
+    })
+  }
 })
 
 // Messages from content scripts for advanced capture
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg?.kind === "capture" && msg?.payload) {
     const item: Item = {
       id: crypto.randomUUID(),
@@ -86,6 +96,20 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       createdAt: Date.now()
     }
     addItem(item).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: String(e) }))
+    return true // async
+  }
+
+  // Handle request from content script to capture visible tab
+  if (msg?.kind === "capture-visible-tab") {
+    const windowId = sender.tab?.windowId
+    chrome.tabs.captureVisibleTab(windowId, { format: "png" }, (dataUrl) => {
+      const err = chrome.runtime.lastError
+      if (err) {
+        sendResponse({ ok: false, error: err.message })
+        return
+      }
+      sendResponse({ ok: true, dataUrl })
+    })
     return true // async
   }
 })
