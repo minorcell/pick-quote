@@ -107,31 +107,44 @@ git push origin gh-pages
 # 6. 在 GitHub Pages 设置中选择 gh-pages 分支作为源
 ```
 
-### 方法三：使用 GitHub Actions（自动化部署）
+### 方法三：使用 GitHub Actions（自动化部署）✨ 推荐
 
-创建 `.github/workflows/deploy.yml`：
+本项目已配置自动化部署工作流，位于 `.github/workflows/deploy-pages.yml`。当 `www` 目录有更新时，会自动部署到 GitHub Pages。
 
-```yaml
-name: Deploy to GitHub Pages
+#### 自动部署配置
 
-on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'www/**'
+工作流已配置完成，包含以下特性：
+- 🚀 自动检测 `www` 目录的更改
+- 📦 自动打包和部署静态文件
+- 🔧 支持手动触发部署
+- 🌐 使用 GitHub 官方 Pages 部署操作
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+#### 启用步骤
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./www
-```
+1. **启用 GitHub Pages**：
+   - 进入仓库的 **Settings** → **Pages**
+   - 在 **Source** 中选择 **GitHub Actions**
+
+2. **推送更改**：
+   ```bash
+   git add www/
+   git commit -m "Update website content"
+   git push origin main
+   ```
+
+3. **查看部署状态**：
+   - 进入仓库的 **Actions** 标签页
+   - 查看部署进度和状态
+
+4. **访问网站**：
+   - 部署完成后，访问 `https://yourusername.github.io/repository-name`
+
+#### 手动触发部署
+
+在 GitHub 仓库页面：
+1. 进入 **Actions** 标签页
+2. 选择 **Deploy to GitHub Pages** 工作流
+3. 点击 **Run workflow** 按钮
 
 ## 本地开发
 
