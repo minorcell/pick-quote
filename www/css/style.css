@@ -93,6 +93,35 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color var(--transition-base), color var(--transition-base);
+  position: relative;
+}
+
+/* ===== Three.js Canvas Background ===== */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+[data-theme="dark"] #bg-canvas {
+  opacity: 0.6;
+}
+
+/* Ensure all content is above the canvas */
+.navbar,
+.hero,
+.features,
+.how-it-works,
+.download,
+footer {
+  position: relative;
+  z-index: 1;
 }
 
 /* ===== Container ===== */
@@ -540,6 +569,7 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
+  perspective: 1000px;
 }
 
 .feature-card {
@@ -548,11 +578,16 @@ section {
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
   transition: all var(--transition-base);
+  transform-style: preserve-3d;
+  will-change: transform;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
 }
 
 .feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-2xl);
+  box-shadow: var(--shadow-3xl);
+  border-color: var(--primary-color);
 }
 
 .feature-icon {

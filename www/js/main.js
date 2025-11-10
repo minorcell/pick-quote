@@ -116,9 +116,168 @@
     }
   };
 
-  // ===== Intersection Observer for Animations =====
+  // ===== GSAP ScrollTrigger Animations =====
   const ScrollAnimations = {
     init() {
+      // Check if GSAP is available
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        console.warn('GSAP not available, falling back to Intersection Observer');
+        this.fallbackAnimation();
+        return;
+      }
+
+      // Register ScrollTrigger plugin
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero section animations
+      gsap.from('.hero-title', {
+        opacity: 0,
+        y: 50,
+        duration: 1.2,
+        ease: 'power3.out'
+      });
+
+      gsap.from('.hero-subtitle', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        delay: 0.3,
+        ease: 'power3.out'
+      });
+
+      gsap.from('.hero-actions', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        delay: 0.5,
+        ease: 'power3.out'
+      });
+
+      gsap.from('.hero-stats', {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        delay: 0.7,
+        ease: 'power3.out'
+      });
+
+      // Floating cards animation
+      gsap.from('.floating-card', {
+        opacity: 0,
+        scale: 0.8,
+        y: 50,
+        duration: 1.2,
+        stagger: 0.15,
+        delay: 0.5,
+        ease: 'back.out(1.7)'
+      });
+
+      // Feature cards with ScrollTrigger
+      gsap.utils.toArray('.feature-card').forEach((card, i) => {
+        gsap.from(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 60,
+          rotationX: -15,
+          duration: 0.8,
+          delay: i * 0.1,
+          ease: 'power3.out'
+        });
+
+        // Hover effect with GSAP
+        card.addEventListener('mouseenter', () => {
+          gsap.to(card, {
+            y: -10,
+            rotationY: 5,
+            duration: 0.4,
+            ease: 'power2.out'
+          });
+        });
+
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, {
+            y: 0,
+            rotationY: 0,
+            duration: 0.4,
+            ease: 'power2.out'
+          });
+        });
+      });
+
+      // Step items animation
+      gsap.utils.toArray('.step-item').forEach((step, i) => {
+        gsap.from(step, {
+          scrollTrigger: {
+            trigger: step,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          x: i % 2 === 0 ? -50 : 50,
+          duration: 0.8,
+          delay: i * 0.2,
+          ease: 'power3.out'
+        });
+      });
+
+      // Download section animation
+      gsap.from('.download-card', {
+        scrollTrigger: {
+          trigger: '.download-card',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        },
+        opacity: 0,
+        scale: 0.95,
+        y: 40,
+        duration: 1,
+        ease: 'power3.out'
+      });
+
+      // Parallax effect on hero background
+      gsap.to('.hero-bg', {
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1
+        },
+        y: 200,
+        opacity: 0.5,
+        ease: 'none'
+      });
+
+      // Section headers
+      gsap.utils.toArray('.section-header').forEach(header => {
+        gsap.from(header, {
+          scrollTrigger: {
+            trigger: header,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          },
+          opacity: 0,
+          y: 30,
+          duration: 0.8,
+          ease: 'power3.out'
+        });
+      });
+
+      // Navbar animation on scroll
+      ScrollTrigger.create({
+        start: 'top -80',
+        end: 99999,
+        toggleClass: {
+          className: 'navbar-scrolled',
+          targets: '.navbar'
+        }
+      });
+    },
+
+    fallbackAnimation() {
       const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -100px 0px'
