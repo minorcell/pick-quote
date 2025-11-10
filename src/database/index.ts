@@ -2,9 +2,9 @@ import type { Item, SearchQuery } from "../types"
 import { computeItemHash } from "../utils"
 
 const DB_NAME = "pickquote-db"
-const DB_VERSION = 2
+const DB_VERSION = 3
 
-type TableNames = "items" | "categories" | "sources"
+type TableNames = "items" | "categories" | "sources" | "settings"
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -36,6 +36,10 @@ function openDb(): Promise<IDBDatabase> {
       // tags store removed in v2 migration
       if (!db.objectStoreNames.contains("sources")) {
         db.createObjectStore("sources", { keyPath: "site" })
+      }
+      // settings store for v3
+      if (!db.objectStoreNames.contains("settings")) {
+        db.createObjectStore("settings", { keyPath: "key" })
       }
     }
     req.onsuccess = () => resolve(req.result)
@@ -189,5 +193,24 @@ export async function exportItems(): Promise<Item[]> {
       }
       cursorReq.onerror = () => reject(cursorReq.error)
     })
+  })
+}
+
+export async function getSetting<T = unknown>(key: string): Promise<T | null> {
+  return withStore("settings", "readonly", async (store) => {
+    return new Promise<T | null>((resolve, reject) => {
+      const req = store.get(key)
+      req.onsuccess = () => {
+        const result = req.result
+        resolve(result ? result.value as T : null)
+      }
+      req.onerror = () => reject(req.error)
+    })
+  })
+}
+
+export async function setSetting<T = unknown>(key: string, value: T): Promise<void> {
+  await withStore("settings", "readwrite", (store) => {
+    store.put({ key, value })
   })
 }
