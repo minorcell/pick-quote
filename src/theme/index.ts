@@ -1,27 +1,77 @@
 import { createTheme, type PaletteMode } from "@mui/material/styles"
 
-export const createAppTheme = (mode: PaletteMode) => createTheme({
-  palette: {
-    mode,
-    background: mode === "light"
-      ? {
-        default: "#faf9f7", // 温暖的米白色背景
-        paper: "#ffffff"
-      }
-      : {
-        default: "#1a1a1a", // 深色背景
-        paper: "#252525"
+export type ThemeMode = "light" | "dark" | "system" | "custom"
+export type ColorScheme =
+  | "default"
+  | "blue"
+  | "green"
+  | "purple"
+  | "orange"
+  | "pink"
+  | "teal"
+  | "indigo"
+
+export interface ThemeConfig {
+  mode: ThemeMode
+  customColor?: {
+    primary: string
+    secondary: string
+  }
+  colorScheme?: ColorScheme
+}
+
+const colorSchemes: Record<ColorScheme, { primary: string; secondary: string }> = {
+  default: { primary: "#6b7785", secondary: "#9c8b7a" },
+  blue: { primary: "#5e81ac", secondary: "#81a1c1" },
+  green: { primary: "#88c0d0", secondary: "#8fbcbb" },
+  purple: { primary: "#b48ead", secondary: "#d08770" },
+  orange: { primary: "#d08770", secondary: "#ebcb8b" },
+  pink: { primary: "#bf616a", secondary: "#d08770" },
+  teal: { primary: "#8fbcbb", secondary: "#88c0d0" },
+  indigo: { primary: "#81a1c1", secondary: "#5e81ac" }
+}
+
+function adjustColor(color: string, amount: number): string {
+  const hex = color.replace("#", "")
+  const r = Math.max(0, Math.min(255, parseInt(hex.substring(0, 2), 16) + amount * 51))
+  const g = Math.max(0, Math.min(255, parseInt(hex.substring(2, 4), 16) + amount * 51))
+  const b = Math.max(0, Math.min(255, parseInt(hex.substring(4, 6), 16) + amount * 51))
+  return `#${Math.round(r).toString(16).padStart(2, "0")}${Math.round(g).toString(16).padStart(2, "0")}${Math.round(b).toString(16).padStart(2, "0")}`
+}
+
+export const createAppTheme = (
+  mode: PaletteMode,
+  config?: ThemeConfig
+) => {
+  const customColors = config?.customColor
+  const colors = customColors
+    ? customColors
+    : config?.colorScheme
+      ? colorSchemes[config.colorScheme]
+      : colorSchemes.default
+
+  return createTheme({
+    palette: {
+      mode,
+      background: mode === "light"
+        ? {
+          default: "#faf9f7", // 温暖的米白色背景
+          paper: "#ffffff"
+        }
+        : {
+          default: "#1a1a1a", // 深色背景
+          paper: "#252525"
+        },
+      primary: {
+        main: colors.primary,
+        light: adjustColor(colors.primary, 0.2),
+        dark: adjustColor(colors.primary, -0.2)
       },
-    primary: {
-      main: "#6b7785", // 柔和的蓝灰色
-      light: "#8a96a3",
-      dark: "#4a5563"
-    },
-    secondary: {
-      main: "#9c8b7a", // 雅致的棕灰色
-      light: "#b5a598",
-      dark: "#7d6f61"
-    },
+      secondary: {
+        main: colors.secondary,
+        light: adjustColor(colors.secondary, 0.2),
+        dark: adjustColor(colors.secondary, -0.2)
+      },
     text: mode === "light"
       ? {
         primary: "#2d3436", // 深灰色主文本
