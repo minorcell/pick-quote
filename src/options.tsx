@@ -22,11 +22,9 @@ import { useEffect, useMemo, useState } from "react"
 import iconPng from "./assets/icon.png"
 import ItemCard from "./components/ItemCard"
 import ItemDialog from "./components/ItemDialog"
-import TabNavigation, { TabValue } from "./components/TabNavigation"
-import SettingsPage from "./components/SettingsPage"
 import { deleteItem, exportItems, searchItems } from "./database"
 import { toZip } from "./export"
-import { createAppTheme, type ThemeConfig } from "./theme"
+import { createAppTheme } from "./theme"
 import type { Item, SearchQuery } from "./types"
 
 export default function OptionsPage() {
@@ -35,49 +33,15 @@ export default function OptionsPage() {
   const [type, setType] = useState<string>("")
   const [dialogItem, setDialogItem] = useState<Item | null>(null)
   const [compactHeader, setCompactHeader] = useState(false)
-  const [activeTab, setActiveTab] = useState<TabValue>("quotes")
-  const [themeConfig, setThemeConfig] = useState<ThemeConfig>({ mode: "system" })
 
   // 检测浏览器的暗色模式偏好
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
 
-  // 确定当前应该使用的模式（系统/手动）
-  const currentMode = useMemo(() => {
-    if (themeConfig.mode === "system") {
-      return prefersDarkMode ? "dark" : "light"
-    }
-    return themeConfig.mode as "light" | "dark"
-  }, [themeConfig.mode, prefersDarkMode])
-
-  // 根据配置创建主题
+  // 根据系统偏好创建主题
   const theme = useMemo(
-    () => createAppTheme(currentMode, themeConfig),
-    [currentMode, themeConfig]
+    () => createAppTheme(prefersDarkMode ? "dark" : "light"),
+    [prefersDarkMode]
   )
-
-  // 加载主题配置
-  useEffect(() => {
-    const loadThemeConfig = async () => {
-      const { getSetting } = await import("./database")
-      const config = await getSetting<ThemeConfig>("theme")
-      if (config) {
-        setThemeConfig(config)
-      }
-    }
-    loadThemeConfig()
-  }, [])
-
-  // 加载主题配置
-  useEffect(() => {
-    const loadThemeConfig = async () => {
-      const { getSetting } = await import("./database")
-      const config = await getSetting<ThemeConfig>("theme")
-      if (config) {
-        setThemeConfig(config)
-      }
-    }
-    loadThemeConfig()
-  }, [])
 
   useEffect(() => {
     onSearch()
@@ -125,7 +89,7 @@ export default function OptionsPage() {
           minHeight: "100vh",
           bgcolor: "background.default"
         }}>
-        <Container sx={{ py: 4 }} maxWidth="xl">
+        <Container sx={{ py: 4 }} maxWidth="md">
           <Box
             sx={{
               position: "sticky",
@@ -166,115 +130,96 @@ export default function OptionsPage() {
               </Typography>
             </Stack>
           </Box>
-
-          <Stack direction="row" spacing={3} alignItems="flex-start">
-            <TabNavigation value={activeTab} onChange={setActiveTab} />
-
-            <Box sx={{ flex: 1 }}>
-              {activeTab === "quotes" && (
-                <>
-                  <Box
-                    sx={{
-                      position: "sticky",
-                      top: headerHeight,
-                      zIndex: 1050,
-                      py: 2,
-                      bgcolor: "background.default",
-                      transition: "top 300ms cubic-bezier(0.4, 0, 0.2, 1)"
-                    }}>
-                    <Stack direction="row" spacing={1.5}>
-                      <TextField
-                        placeholder="搜索关键词"
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        size="small"
-                        fullWidth
-                        sx={{
-                          "& .MuiOutlinedInput-root": {
-                            bgcolor: "background.paper",
-                            borderRadius: 2,
-                            "&:hover fieldset": {
-                              borderColor: "primary.light"
-                            }
-                          }
-                        }}
-                      />
-                      <FormControl
-                        size="small"
-                        sx={{
-                          minWidth: 120,
-                          "& .MuiOutlinedInput-root": {
-                            bgcolor: "background.paper",
-                            borderRadius: 2
-                          }
-                        }}>
-                        <InputLabel id="type-label">类型</InputLabel>
-                        <Select
-                          labelId="type-label"
-                          value={type}
-                          label="类型"
-                          onChange={(e) => setType(e.target.value)}>
-                          <MenuItem value="">全部</MenuItem>
-                          <MenuItem value="text">文本</MenuItem>
-                          <MenuItem value="image">图片</MenuItem>
-                          <MenuItem value="link">链接</MenuItem>
-                          <MenuItem value="snapshot">快照</MenuItem>
-                        </Select>
-                      </FormControl>
-                      <Button
-                        variant="outlined"
-                        sx={{
-                          borderRadius: 2,
-                          px: 2.5,
-                          minWidth: 80
-                        }}
-                        onClick={async () => {
-                          const all = await exportItems()
-                          const blob = await toZip(all)
-                          const url = URL.createObjectURL(blob)
-                          const a = document.createElement("a")
-                          a.href = url
-                          a.download = "pickquote-export.zip"
-                          a.click()
-                          URL.revokeObjectURL(url)
-                        }}>
-                        导出
-                      </Button>
-                    </Stack>
-                  </Box>
-                  <Box
-                    sx={{
-                      columnCount: { xs: 1, sm: 2, md: 3 },
-                      columnGap: 2.5,
-                      mt: 2
-                    }}>
-                    {items.map((it) => (
-                      <Box key={it.id} sx={{ breakInside: "avoid" }}>
-                        <ItemCard
-                          item={it}
-                          onDelete={onDelete}
-                          onClick={() => setDialogItem(it)}
-                        />
-                      </Box>
-                    ))}
-                  </Box>
-                  <ItemDialog
-                    item={dialogItem}
-                    open={Boolean(dialogItem)}
-                    onClose={() => setDialogItem(null)}
-                  />
-                </>
-              )}
-
-              {activeTab === "settings" && (
-                <SettingsPage
-                  themeConfig={themeConfig}
-                  onThemeChange={setThemeConfig}
+          <Box
+            sx={{
+              position: "sticky",
+              top: headerHeight,
+              zIndex: 1050,
+              py: 2,
+              bgcolor: "background.default",
+              transition: "top 300ms cubic-bezier(0.4, 0, 0.2, 1)"
+            }}>
+            <Stack direction="row" spacing={1.5}>
+              <TextField
+                placeholder="搜索关键词"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                size="small"
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                    "&:hover fieldset": {
+                      borderColor: "primary.light"
+                    }
+                  }
+                }}
+              />
+              <FormControl
+                size="small"
+                sx={{
+                  minWidth: 120,
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2
+                  }
+                }}>
+                <InputLabel id="type-label">类型</InputLabel>
+                <Select
+                  labelId="type-label"
+                  value={type}
+                  label="类型"
+                  onChange={(e) => setType(e.target.value)}>
+                  <MenuItem value="">全部</MenuItem>
+                  <MenuItem value="text">文本</MenuItem>
+                  <MenuItem value="image">图片</MenuItem>
+                  <MenuItem value="link">链接</MenuItem>
+                  <MenuItem value="snapshot">快照</MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: 2,
+                  px: 2.5,
+                  minWidth: 80
+                }}
+                onClick={async () => {
+                  const all = await exportItems()
+                  const blob = await toZip(all)
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement("a")
+                  a.href = url
+                  a.download = "pickquote-export.zip"
+                  a.click()
+                  URL.revokeObjectURL(url)
+                }}>
+                导出
+              </Button>
+            </Stack>
+          </Box>
+          <Box
+            sx={{
+              columnCount: { xs: 1, sm: 2, md: 3 },
+              columnGap: 2.5,
+              mt: 2
+            }}>
+            {items.map((it) => (
+              <Box key={it.id} sx={{ breakInside: "avoid" }}>
+                <ItemCard
+                  item={it}
+                  onDelete={onDelete}
+                  onClick={() => setDialogItem(it)}
                 />
-              )}
-            </Box>
-          </Stack>
-
+              </Box>
+            ))}
+          </Box>
+          <ItemDialog
+            item={dialogItem}
+            open={Boolean(dialogItem)}
+            onClose={() => setDialogItem(null)}
+          />
           <Box
             component="footer"
             sx={{
