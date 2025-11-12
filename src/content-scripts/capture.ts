@@ -88,8 +88,16 @@ function deriveContext() {
   const range = selection.getRangeAt(0)
   const paragraph = range?.commonAncestorContainer?.textContent || ""
   const text = selection.toString()
-  const before = paragraph.slice(Math.max(0, paragraph.indexOf(text) - 10), paragraph.indexOf(text))
-  const after = paragraph.slice(paragraph.indexOf(text) + text.length, paragraph.indexOf(text) + text.length + 10)
+  const idx = paragraph.indexOf(text)
+
+  if (idx === -1) {
+    return { paragraph }
+  }
+
+  const beforeStart = Math.max(0, idx - 10)
+  const before = paragraph.slice(beforeStart, idx)
+  const afterEnd = Math.min(paragraph.length, idx + text.length + 10)
+  const after = paragraph.slice(idx + text.length, afterEnd)
   return { before, after, paragraph }
 }
 
