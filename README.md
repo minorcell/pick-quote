@@ -2,7 +2,7 @@
 
 > 让每一次灵光乍现，都有处安放
 
-**🌐 项目主页**: [https://github.com/minorcell/pick-quote](https://github.com/minorcell/pick-quote)
+**🌐 项目主页**: [https://minorcell.github.io/pick-quote/](https://minorcell.github.io/pick-quote/)
 
 一款轻量级浏览器插件，在浏览网页时快速收藏灵感片段。支持文本、图片、链接和页面快照，自动保留上下文信息，所有数据仅存储在本地。
 
