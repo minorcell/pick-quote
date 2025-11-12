@@ -1,16 +1,14 @@
-package main
+package quicksort
 
-import "fmt"
-
-func main() {
-	fmt.Println("Quick Sort Example")
-	arr := []int{64, 34, 25, 12, 22, 11, 90}
-	fmt.Println("Original array:", arr)
+// Sort sorts the given integer slice using quicksort algorithm
+func Sort(arr []int) {
+	if len(arr) <= 1 {
+		return
+	}
 	quickSort(arr, 0, len(arr)-1)
-	fmt.Println("Sorted array:", arr)
 }
 
-// quickSort function with intentionally bad formatting
+// quickSort performs the recursive quicksort
 func quickSort(arr []int, low int, high int) {
 	if low < high {
 		pi := partition(arr, low, high)
@@ -19,6 +17,7 @@ func quickSort(arr []int, low int, high int) {
 	}
 }
 
+// partition partitions the array and returns the pivot index
 func partition(arr []int, low int, high int) int {
 	pivot := arr[high]
 	i := low - 1
