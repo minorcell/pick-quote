@@ -1,146 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>页面未找到 - 拾句</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
     <style>
-        .error-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 2rem;
-        }
+      .error-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+        padding: 2rem;
+      }
 
+      .error-code {
+        font-size: 8rem;
+        font-weight: 500;
+        color: var(--primary-color);
+        line-height: 1;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+      }
+
+      .error-title {
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+      }
+
+      .error-description {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin-bottom: 2rem;
+        line-height: 1.8;
+      }
+
+      .error-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn-primary {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 0.875rem 2rem;
+        border-radius: var(--border-radius-md);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all var(--transition-base);
+        border: none;
+        cursor: pointer;
+        font-family: var(--font-family);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--text-primary);
+        padding: 0.875rem 2rem;
+        border-radius: var(--border-radius-md);
+        text-decoration: none;
+        border: 2px solid var(--border-color);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all var(--transition-base);
+      }
+
+      .btn-primary:hover,
+      .btn-outline:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .decorative-icon {
+        font-size: 4rem;
+        margin-bottom: 2rem;
+        opacity: 0.1;
+      }
+
+      @media (max-width: 768px) {
         .error-code {
-            font-size: 8rem;
-            font-weight: 500;
-            color: var(--primary-color);
-            line-height: 1;
-            margin-bottom: 1rem;
-            opacity: 0.3;
+          font-size: 4rem;
         }
 
         .error-title {
-            font-size: 2rem;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
+          font-size: 1.5rem;
         }
 
         .error-description {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin-bottom: 2rem;
-            line-height: 1.8;
+          font-size: 1rem;
         }
 
         .error-actions {
-            display: flex;
-            gap: 1rem;
+          flex-direction: column;
+          width: 100%;
         }
 
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 0.875rem 2rem;
-            border-radius: var(--border-radius-md);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all var(--transition-base);
-            border: none;
-            cursor: pointer;
-            font-family: var(--font-family);
-        }
-
+        .btn-primary,
         .btn-outline {
-            background: transparent;
-            color: var(--text-primary);
-            padding: 0.875rem 2rem;
-            border-radius: var(--border-radius-md);
-            text-decoration: none;
-            border: 2px solid var(--border-color);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all var(--transition-base);
+          width: 100%;
+          justify-content: center;
         }
-
-        .btn-primary:hover, .btn-outline:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .decorative-icon {
-            font-size: 4rem;
-            margin-bottom: 2rem;
-            opacity: 0.1;
-        }
-
-        @media (max-width: 768px) {
-            .error-code {
-                font-size: 4rem;
-            }
-
-            .error-title {
-                font-size: 1.5rem;
-            }
-
-            .error-description {
-                font-size: 1rem;
-            }
-
-            .error-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .btn-primary, .btn-outline {
-                width: 100%;
-                justify-content: center;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="error-page">
-        <div class="decorative-icon">📝</div>
-        <div class="error-code">404</div>
-        <h1 class="error-title">页面未找到</h1>
-        <p class="error-description">
-            抱歉，您访问的页面不存在或已被移动。<br>
-            让我们帮您回到正确的轨道上。
-        </p>
-        <div class="error-actions">
-            <a href="index.html" class="btn-primary">
-                <svg viewBox="0 0 24 24" width="20" height="20">
-                    <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
-                </svg>
-                返回首页
-            </a>
-            <a href="javascript:history.back()" class="btn-outline">
-                <svg viewBox="0 0 24 24" width="20" height="20">
-                    <path fill="currentColor" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"/>
-                </svg>
-                返回上页
-            </a>
-        </div>
+      <div class="decorative-icon">📝</div>
+      <div class="error-code">404</div>
+      <h1 class="error-title">页面未找到</h1>
+      <p class="error-description">
+        抱歉，您访问的页面不存在或已被移动。<br />
+        让我们帮您回到正确的轨道上。
+      </p>
+      <div class="error-actions">
+        <a href="index.html" class="btn-primary">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path
+              fill="currentColor"
+              d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+          </svg>
+          返回首页
+        </a>
+        <a href="javascript:history.back()" class="btn-outline">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path
+              fill="currentColor"
+              d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" />
+          </svg>
+          返回上页
+        </a>
+      </div>
     </div>
 
     <script>
-        // Apply saved theme
-        const theme = localStorage.getItem('pickquote-theme') ||
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
+      // Apply saved theme
+      const theme =
+        localStorage.getItem("pickquote-theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light")
+      document.documentElement.setAttribute("data-theme", theme)
     </script>
-</body>
+  </body>
 </html>

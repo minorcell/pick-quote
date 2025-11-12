@@ -17,16 +17,21 @@ export async function toZip(items: Item[]): Promise<Blob> {
 
   for (const it of items) {
     let assetPath = ""
-    if ((it.type === "image" || it.type === "snapshot") && typeof it.content === "string" && it.content.startsWith("data:image")) {
+    if (
+      (it.type === "image" || it.type === "snapshot") &&
+      typeof it.content === "string" &&
+      it.content.startsWith("data:image")
+    ) {
       const filename = `images/${it.hash || `${Date.now()}-${Math.random().toString(16).slice(2)}`}.png`
       const blob = dataUrlToBlob(it.content)
       zip.file(filename, blob)
       assetPath = filename
     }
 
-    const content = (it.type === "image" || it.type === "snapshot") && assetPath
-      ? `![snapshot](${assetPath})`
-      : it.content.replace(/\n/g, " ")
+    const content =
+      (it.type === "image" || it.type === "snapshot") && assetPath
+        ? `![snapshot](${assetPath})`
+        : it.content.replace(/\n/g, " ")
     const source = `(${it.source.title || it.source.url})`
     mdLines.push(`- ${content} ${source}`)
   }
