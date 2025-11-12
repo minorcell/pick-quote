@@ -107,10 +107,12 @@ src/
 `src/export/` 目录包含两种导出机制：
 
 1. **ZIP 导出**（`zipExport.ts`）：将所有条目导出为 Markdown，并嵌入图片
+
    - 图片从 data URL 提取并保存到 `images/` 文件夹
    - Markdown 文件使用相对路径引用图片
 
 2. **图片卡片导出**（`imageExport.ts`）：使用 html2canvas 将单个条目导出为可分享的 PNG 卡片
+
    - 由 ShareCard 组件使用，用于社交媒体分享
    - 渲染带有引文和来源署名的样式化卡片
 

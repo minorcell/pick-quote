@@ -23,10 +23,13 @@ function openDb(): Promise<IDBDatabase> {
         try {
           const tx = req.transaction as IDBTransaction
           const store = tx.objectStore("items")
-          if (store.indexNames && (store.indexNames as any).contains?.("tags")) {
+          if (
+            store.indexNames &&
+            (store.indexNames as any).contains?.("tags")
+          ) {
             store.deleteIndex("tags")
           }
-        } catch { }
+        } catch {}
       }
       // stub other stores for future
       if (!db.objectStoreNames.contains("categories")) {
@@ -43,7 +46,11 @@ function openDb(): Promise<IDBDatabase> {
   })
 }
 
-async function withStore<T>(name: TableNames, mode: IDBTransactionMode, fn: (store: IDBObjectStore) => Promise<T> | T): Promise<T> {
+async function withStore<T>(
+  name: TableNames,
+  mode: IDBTransactionMode,
+  fn: (store: IDBObjectStore) => Promise<T> | T
+): Promise<T> {
   const db = await openDb()
   const tx = db.transaction(name, mode)
   const store = tx.objectStore(name)
@@ -121,7 +128,9 @@ export async function searchItems(q: SearchQuery): Promise<Item[]> {
           (!q.from || item.createdAt >= q.from) &&
           (!q.to || item.createdAt <= q.to) &&
           (!q.categoryId || item.categoryId === q.categoryId) &&
-          (!q.keyword || (item.content?.toLowerCase().includes(q.keyword.toLowerCase()) || item.source.title?.toLowerCase().includes(q.keyword.toLowerCase())))
+          (!q.keyword ||
+            item.content?.toLowerCase().includes(q.keyword.toLowerCase()) ||
+            item.source.title?.toLowerCase().includes(q.keyword.toLowerCase()))
         ) {
           results.push(item)
         }
@@ -138,7 +147,9 @@ export async function updateItem(item: Item): Promise<void> {
   })
 }
 
-export async function listCategories(): Promise<{ id: string; name: string }[]> {
+export async function listCategories(): Promise<
+  { id: string; name: string }[]
+> {
   return withStore("categories", "readonly", async (store) => {
     const all: { id: string; name: string }[] = []
     return new Promise((resolve, reject) => {
@@ -155,7 +166,10 @@ export async function listCategories(): Promise<{ id: string; name: string }[]> 
   })
 }
 
-export async function upsertCategory(cat: { id: string; name: string }): Promise<void> {
+export async function upsertCategory(cat: {
+  id: string
+  name: string
+}): Promise<void> {
   await withStore("categories", "readwrite", (store) => {
     store.put(cat)
   })

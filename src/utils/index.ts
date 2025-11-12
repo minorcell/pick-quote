@@ -6,7 +6,10 @@ export async function sha256(input: string): Promise<string> {
   return hashHex
 }
 
-export async function computeItemHash(content: string, url: string): Promise<string> {
+export async function computeItemHash(
+  content: string,
+  url: string
+): Promise<string> {
   return sha256(`${url}|${content}`)
 }
 

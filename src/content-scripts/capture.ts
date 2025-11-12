@@ -105,7 +105,10 @@ function deriveAnchor() {
   const selection = document.getSelection()
   if (!selection || selection.rangeCount === 0) return undefined
   const node = selection.anchorNode as Element | null
-  const el = node?.nodeType === Node.ELEMENT_NODE ? (node as Element) : node?.parentElement
+  const el =
+    node?.nodeType === Node.ELEMENT_NODE
+      ? (node as Element)
+      : node?.parentElement
   if (!el) return undefined
   return getCssSelector(el)
 }
