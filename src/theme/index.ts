@@ -3,7 +3,7 @@ import { createTheme, type PaletteMode } from "@mui/material/styles"
 export const createAppTheme = (mode: PaletteMode) =>
   createTheme({
     palette: {
-      mode,
+          mode,
       background:
         mode === "light"
           ? {
@@ -20,9 +20,10 @@ export const createAppTheme = (mode: PaletteMode) =>
         dark: "#4a5563"
       },
       secondary: {
-        main: "#9c8b7a", // 雅致的棕灰色
-        light: "#b5a598",
-        dark: "#7d6f61"
+              main: "#9c8b7a", // 雅致的棕灰色
+              light: "#b5a598",
+        
+          dark: "#7d6f61"
       },
       text:
         mode === "light"
