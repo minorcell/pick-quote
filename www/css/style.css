@@ -98,36 +98,6 @@ body {
   position: relative;
 }
 
-/* ===== Animation Initial States (Prevent GSAP Flash) ===== */
-/* Hide elements that will be animated by GSAP until animations are ready */
-.hero-title,
-.hero-subtitle,
-.hero-actions,
-.hero-stats,
-.floating-card {
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-.feature-card,
-.step-item,
-.download-card {
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-/* Once GSAP is ready, it will take over the animation */
-.animations-ready .hero-title,
-.animations-ready .hero-subtitle,
-.animations-ready .hero-actions,
-.animations-ready .hero-stats,
-.animations-ready .floating-card,
-.animations-ready .feature-card,
-.animations-ready .step-item,
-.animations-ready .download-card {
-  /* GSAP will handle these */
-}
-
 /* ===== Three.js Canvas Background ===== */
 #bg-canvas {
   position: fixed;
