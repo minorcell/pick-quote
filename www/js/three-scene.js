@@ -26,11 +26,23 @@
         return
       }
 
+      // Initially hide canvas to prevent flash
+      canvas.style.opacity = '0'
+
       this.setupScene(canvas)
       this.createEnhancedParticles()
       this.createParticleConnections()
       this.setupLights()
       this.setupEventListeners()
+
+      // Fade in canvas after scene is ready
+      requestAnimationFrame(() => {
+        canvas.style.transition = 'opacity 0.8s ease'
+        // Use the opacity value from CSS or default to theme-based values
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+        canvas.style.opacity = isDark ? '0.7' : '0.5'
+      })
+
       this.animate()
     },
 

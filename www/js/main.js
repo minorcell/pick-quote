@@ -133,6 +133,9 @@
       // Register ScrollTrigger plugin
       gsap.registerPlugin(ScrollTrigger)
 
+      // Mark animations as ready to allow CSS transitions
+      document.body.classList.add('animations-ready')
+
       // Hero section animations
       gsap.from(".hero-title", {
         opacity: 0,
