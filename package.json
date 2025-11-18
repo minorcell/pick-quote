@@ -20,7 +20,8 @@
     "jszip": "^3.10.1",
     "plasmo": "0.90.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-masonry-css": "^1.0.16"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.1",

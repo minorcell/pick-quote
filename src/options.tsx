@@ -17,7 +17,8 @@ import Avatar from "@mui/material/Avatar"
 import IconButton from "@mui/material/IconButton"
 import { ThemeProvider } from "@mui/material/styles"
 import Tooltip from "@mui/material/Tooltip"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import Masonry from "react-masonry-css"
 
 import iconPng from "./assets/icon.png"
 import ItemCard from "./components/ItemCard"
@@ -26,13 +27,19 @@ import { deleteItem, exportItems, searchItems } from "./database"
 import { toZip } from "./export"
 import { createAppTheme } from "./theme"
 import type { Item, SearchQuery } from "./types"
+import "./options.css"
 
 export default function OptionsPage() {
-  const [items, setItems] = useState<Item[]>([])
+  const [allItems, setAllItems] = useState<Item[]>([])
+  const [displayedItems, setDisplayedItems] = useState<Item[]>([])
   const [keyword, setKeyword] = useState("")
   const [type, setType] = useState<string>("")
   const [dialogItem, setDialogItem] = useState<Item | null>(null)
   const [compactHeader, setCompactHeader] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+
+  const ITEMS_PER_PAGE = 20
 
   // 检测浏览器的暗色模式偏好
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
@@ -56,13 +63,49 @@ export default function OptionsPage() {
   const onSearch = async () => {
     const q: SearchQuery = { keyword, type: (type || undefined) as any }
     const list = await searchItems(q)
-    setItems(list)
+    setAllItems(list)
+    // 初始加载第一页
+    setDisplayedItems(list.slice(0, ITEMS_PER_PAGE))
+    setHasMore(list.length > ITEMS_PER_PAGE)
   }
 
   const onDelete = async (id: string) => {
     await deleteItem(id)
     onSearch()
   }
+
+  // 加载更多数据
+  const loadMore = useCallback(() => {
+    if (!hasMore) return
+
+    const currentLength = displayedItems.length
+    const nextItems = allItems.slice(0, currentLength + ITEMS_PER_PAGE)
+    setDisplayedItems(nextItems)
+    setHasMore(nextItems.length < allItems.length)
+  }, [allItems, displayedItems.length, hasMore, ITEMS_PER_PAGE])
+
+  // IntersectionObserver 实现懒加载
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    const currentRef = loadMoreRef.current
+    if (currentRef) {
+      observer.observe(currentRef)
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef)
+      }
+    }
+  }, [loadMore, hasMore])
 
   useEffect(() => {
     const COMPACT_THRESHOLD = 120
@@ -199,14 +242,16 @@ export default function OptionsPage() {
               </Button>
             </Stack>
           </Box>
-          <Box
-            sx={{
-              columnCount: { xs: 1, sm: 2, md: 3 },
-              columnGap: 2.5,
-              mt: 2
-            }}>
-            {items.map((it) => (
-              <Box key={it.id} sx={{ breakInside: "avoid" }}>
+          <Masonry
+            breakpointCols={{
+              default: 3,
+              900: 2,
+              600: 1
+            }}
+            className="masonry-grid"
+            columnClassName="masonry-grid-column">
+            {displayedItems.map((it) => (
+              <Box key={it.id}>
                 <ItemCard
                   item={it}
                   onDelete={onDelete}
@@ -214,7 +259,20 @@ export default function OptionsPage() {
                 />
               </Box>
             ))}
-          </Box>
+          </Masonry>
+          {hasMore && (
+            <Box
+              ref={loadMoreRef}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                py: 4
+              }}>
+              <Typography variant="body2" color="text.secondary">
+                加载中...
+              </Typography>
+            </Box>
+          )}
           <ItemDialog
             item={dialogItem}
             open={Boolean(dialogItem)}
