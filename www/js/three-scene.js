@@ -60,16 +60,30 @@
     void main() {
       vec2 uv = vUv;
       
+      // Correct aspect ratio for ripple calculation
+      float aspect = 1.0; // We'll assume square for simplicity or pass uniform later if needed, 
+                          // but for a background noise, slight stretch is acceptable.
+                          // To make it better, let's use a simple distance check.
+      
+      // Mouse interaction - Ripple Effect
+      float dist = distance(uv, uMouse);
+      float rippleStrength = 0.3; // Significantly increased strength
+      
+      // Create a localized wave/ripple distortion with wider reach
+      // We use a sine wave that decays slower with distance
+      float ripple = sin(dist * 15.0 - uTime * 3.0) * exp(-dist * 3.0) * rippleStrength;
+      
+      // Apply stronger ripple to UVs for distortion
+      vec2 distortedUv = uv + ripple * (uv - uMouse) * 2.0;
+      
       // Faster movement for better visibility
       float time = uTime * 0.4;
       
-      // Mouse influence
-      vec2 mouseEffect = (uMouse - 0.5) * 0.2;
-      
-      // Create flowing noise layers with more dynamic offsets
-      float n1 = snoise(uv * 1.2 + vec2(time * 0.1, time * 0.15) + mouseEffect);
-      float n2 = snoise(uv * 2.0 - vec2(time * 0.2, time * 0.1) - mouseEffect);
-      float n3 = snoise(uv * 3.0 + vec2(n1, n2) * 0.4 + vec2(time * 0.05));
+      // Create flowing noise layers using distorted UVs
+      // The distortion now heavily impacts the noise patterns (color blocks)
+      float n1 = snoise(distortedUv * 1.2 + vec2(time * 0.1, time * 0.15));
+      float n2 = snoise(distortedUv * 2.0 - vec2(time * 0.2, time * 0.1));
+      float n3 = snoise(distortedUv * 3.0 + vec2(n1, n2) * 0.4 + vec2(time * 0.05));
       
       // Mix colors based on noise with sharper transitions
       float mix1 = smoothstep(-0.6, 0.6, n1);
@@ -82,6 +96,9 @@
       // Add subtle grain/texture
       float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
       color += grain * 0.03;
+      
+      // Highlight the ripple peaks
+      color += vec3(0.15) * ripple * 3.0;
       
       gl_FragColor = vec4(color, 1.0);
     }
