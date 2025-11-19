@@ -3,7 +3,7 @@
  * Handles auto theme switching, smooth scrolling, and interactive features
  */
 
-;(function () {
+; (function () {
   "use strict"
 
   // ===== Theme Management =====
@@ -118,193 +118,178 @@
     }
   }
 
-  // ===== GSAP ScrollTrigger Animations =====
-  const ScrollAnimations = {
+  // ===== Magnetic Button Effect =====
+  const MagneticEffect = {
     init() {
-      // Check if GSAP is available
-      if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
-        console.warn(
-          "GSAP not available, falling back to Intersection Observer"
-        )
-        this.fallbackAnimation()
-        return
-      }
+      const buttons = document.querySelectorAll(".btn, .nav-link, .github-btn")
 
-      // Register ScrollTrigger plugin
-      gsap.registerPlugin(ScrollTrigger)
+      buttons.forEach(btn => {
+        btn.addEventListener("mousemove", (e) => {
+          const rect = btn.getBoundingClientRect()
+          const x = e.clientX - rect.left - rect.width / 2
+          const y = e.clientY - rect.top - rect.height / 2
 
-      // Hero section animations
-      gsap.from(".hero-title", {
-        opacity: 0,
-        y: 50,
-        duration: 1.2,
-        ease: "power3.out"
-      })
-
-      gsap.from(".hero-subtitle", {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        delay: 0.3,
-        ease: "power3.out"
-      })
-
-      gsap.from(".hero-actions", {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        delay: 0.5,
-        ease: "power3.out"
-      })
-
-      gsap.from(".hero-stats", {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        delay: 0.7,
-        ease: "power3.out"
-      })
-
-      // Floating cards animation
-      gsap.from(".floating-card", {
-        opacity: 0,
-        scale: 0.8,
-        y: 50,
-        duration: 1.2,
-        stagger: 0.15,
-        delay: 0.5,
-        ease: "back.out(1.7)"
-      })
-
-      // Feature cards with ScrollTrigger
-      gsap.utils.toArray(".feature-card").forEach((card, i) => {
-        gsap.from(card, {
-          scrollTrigger: {
-            trigger: card,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          },
-          opacity: 0,
-          y: 60,
-          rotationX: -15,
-          duration: 0.8,
-          delay: i * 0.1,
-          ease: "power3.out"
+          gsap.to(btn, {
+            x: x * 0.3,
+            y: y * 0.3,
+            duration: 0.3,
+            ease: "power2.out"
+          })
         })
 
-        // Hover effect with GSAP
-        card.addEventListener("mouseenter", () => {
+        btn.addEventListener("mouseleave", () => {
+          gsap.to(btn, {
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: "elastic.out(1, 0.3)"
+          })
+        })
+      })
+    }
+  }
+
+  // ===== Text Reveal Animation =====
+  const TextReveal = {
+    init() {
+      // Wrap text in reveal containers
+      const headings = document.querySelectorAll(".hero-title, .section-title")
+      headings.forEach(h => {
+        if (!h.querySelector('.reveal-inner')) {
+          const text = h.innerHTML
+          h.innerHTML = `<span class="reveal-text"><span class="reveal-inner">${text}</span></span>`
+        }
+      })
+    }
+  }
+
+  // ===== 3D Tilt Effect =====
+  const TiltEffect = {
+    init() {
+      const cards = document.querySelectorAll(".feature-card, .floating-card")
+
+      cards.forEach(card => {
+        card.addEventListener("mousemove", (e) => {
+          const rect = card.getBoundingClientRect()
+          const x = e.clientX - rect.left
+          const y = e.clientY - rect.top
+
+          const centerX = rect.width / 2
+          const centerY = rect.height / 2
+
+          const rotateX = ((y - centerY) / centerY) * -10
+          const rotateY = ((x - centerX) / centerX) * 10
+
           gsap.to(card, {
-            y: -10,
-            rotationY: 5,
+            rotationX: rotateX,
+            rotationY: rotateY,
+            scale: 1.05,
             duration: 0.4,
-            ease: "power2.out"
+            ease: "power2.out",
+            transformPerspective: 1000
           })
         })
 
         card.addEventListener("mouseleave", () => {
           gsap.to(card, {
-            y: 0,
+            rotationX: 0,
             rotationY: 0,
-            duration: 0.4,
-            ease: "power2.out"
+            scale: 1,
+            duration: 0.7,
+            ease: "elastic.out(1, 0.5)"
           })
         })
       })
+    }
+  }
 
-      // Step items animation
-      gsap.utils.toArray(".step-item").forEach((step, i) => {
-        gsap.from(step, {
-          scrollTrigger: {
-            trigger: step,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          },
-          opacity: 0,
-          x: i % 2 === 0 ? -50 : 50,
-          duration: 0.8,
-          delay: i * 0.2,
-          ease: "power3.out"
-        })
-      })
+  // ===== GSAP ScrollTrigger Animations =====
+  const ScrollAnimations = {
+    init() {
+      if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
+        console.warn("GSAP not available")
+        return
+      }
 
-      // Download section animation
-      gsap.from(".download-card", {
-        scrollTrigger: {
-          trigger: ".download-card",
-          start: "top 80%",
-          toggleActions: "play none none reverse"
-        },
+      gsap.registerPlugin(ScrollTrigger)
+
+      // Initialize helpers
+      TextReveal.init()
+      MagneticEffect.init()
+      TiltEffect.init()
+
+      // Staggered Navbar
+      gsap.from(".nav-brand, .nav-link, .github-btn", {
+        y: -20,
         opacity: 0,
-        scale: 0.95,
-        y: 40,
-        duration: 1,
+        duration: 0.8,
+        stagger: 0.1,
         ease: "power3.out"
       })
 
-      // Parallax effect on hero background
-      gsap.to(".hero-bg", {
+      // Hero Text Reveal
+      gsap.to(".hero-title .reveal-inner", {
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out",
+        delay: 0.2
+      })
+
+      gsap.from(".hero-subtitle", {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 0.6,
+        ease: "power3.out"
+      })
+
+      gsap.from(".hero-actions", {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 0.8,
+        ease: "power3.out"
+      })
+
+      // Floating Cards Entrance
+      gsap.from(".floating-card", {
+        y: 100,
+        opacity: 0,
+        duration: 1.5,
+        stagger: 0.2,
+        delay: 0.5,
+        ease: "power4.out"
+      })
+
+      // Feature Cards Stagger
+      gsap.from(".feature-card", {
         scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1
+          trigger: ".features-grid",
+          start: "top 95%" // Trigger earlier to ensure visibility
         },
-        y: 200,
-        opacity: 0.5,
-        ease: "none"
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.15,
+        ease: "power3.out",
+        clearProps: "opacity,transform" // Ensure clean state after animation
       })
 
-      // Section headers
-      gsap.utils.toArray(".section-header").forEach((header) => {
-        gsap.from(header, {
+      // Section Titles Reveal
+      gsap.utils.toArray(".section-title .reveal-inner").forEach(title => {
+        gsap.to(title, {
           scrollTrigger: {
-            trigger: header,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
+            trigger: title.closest(".section-header"),
+            start: "top 85%"
           },
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          ease: "power3.out"
+          y: 0,
+          duration: 1,
+          ease: "power4.out"
         })
       })
 
-      // Navbar animation on scroll
-      ScrollTrigger.create({
-        start: "top -80",
-        end: 99999,
-        toggleClass: {
-          className: "navbar-scrolled",
-          targets: ".navbar"
-        }
-      })
-    },
-
-    fallbackAnimation() {
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -100px 0px"
-      }
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = "1"
-            entry.target.style.transform = "translateY(0)"
-          }
-        })
-      }, observerOptions)
-
-      // Observe feature cards and other animated elements
-      document
-        .querySelectorAll(".feature-card, .step-item, .download-card")
-        .forEach((el) => {
-          el.style.opacity = "0"
-          el.style.transform = "translateY(30px)"
-          el.style.transition = "opacity 0.6s ease, transform 0.6s ease"
-          observer.observe(el)
-        })
+      // Refresh ScrollTrigger to account for DOM changes (TextReveal)
+      ScrollTrigger.refresh()
     }
   }
 

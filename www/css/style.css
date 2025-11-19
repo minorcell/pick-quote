@@ -105,16 +105,14 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
-  opacity: 0.5;
+  z-index: 0;
+  opacity: 1;
   pointer-events: none;
   transition: opacity var(--transition-slow);
-  filter: blur(0.5px);
 }
 
 [data-theme="dark"] #bg-canvas {
-  opacity: 0.7;
-  filter: blur(0.8px);
+  opacity: 1;
 }
 
 /* Enhance background with subtle gradient overlay */
@@ -126,22 +124,18 @@ body::before {
   width: 100%;
   height: 100%;
   z-index: -2;
-  background: radial-gradient(
-    ellipse at top,
-    var(--bg-primary) 0%,
-    rgba(156, 139, 122, 0.03) 50%,
-    var(--bg-primary) 100%
-  );
+  background: radial-gradient(ellipse at top,
+      var(--bg-primary) 0%,
+      rgba(156, 139, 122, 0.03) 50%,
+      var(--bg-primary) 100%);
   pointer-events: none;
 }
 
 [data-theme="dark"] body::before {
-  background: radial-gradient(
-    ellipse at top,
-    var(--bg-primary) 0%,
-    rgba(107, 119, 133, 0.05) 50%,
-    var(--bg-primary) 100%
-  );
+  background: radial-gradient(ellipse at top,
+      var(--bg-primary) 0%,
+      rgba(107, 119, 133, 0.05) 50%,
+      var(--bg-primary) 100%);
 }
 
 /* Ensure all content is above the canvas */
@@ -280,6 +274,7 @@ footer {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -305,11 +300,9 @@ footer {
   right: -10%;
   width: 800px;
   height: 800px;
-  background: radial-gradient(
-    circle,
-    var(--primary-light) 0%,
-    var(--secondary-color) 100%
-  );
+  background: radial-gradient(circle,
+      var(--primary-light) 0%,
+      var(--secondary-color) 100%);
   opacity: 0.05;
   border-radius: 50%;
   z-index: -1;
@@ -317,10 +310,12 @@ footer {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translate(0, 0) rotate(0deg);
   }
+
   50% {
     transform: translate(-50px, -50px) rotate(5deg);
   }
@@ -342,6 +337,7 @@ footer {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -473,10 +469,12 @@ footer {
 }
 
 @keyframes floatCard {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-20px);
   }
@@ -793,6 +791,13 @@ kbd {
   color: var(--text-tertiary);
   margin-top: 1rem;
   text-align: center;
+}
+
+.download-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 /* ===== Extension Preview ===== */
@@ -1119,6 +1124,7 @@ kbd {
 
 /* ===== Animations ===== */
 @media (prefers-reduced-motion: no-preference) {
+
   .floating-card,
   .hero-bg {
     animation-play-state: running;
@@ -1132,6 +1138,7 @@ kbd {
 
 /* ===== Print Styles ===== */
 @media print {
+
   .navbar,
   .hero-actions,
   .download-actions {
@@ -1173,4 +1180,15 @@ kbd {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
+}
+
+/* ===== Text Reveal Animation ===== */
+.reveal-text {
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.reveal-inner {
+  display: block;
+  transform: translateY(100%);
 }

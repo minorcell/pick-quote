@@ -3,21 +3,99 @@
  * Enhanced particle system with literary aesthetics and technical depth
  */
 
-;(function () {
+/**
+ * Three.js Liquid Gradient Background
+ * A smooth, premium shader-based background that resembles flowing ink or aurora.
+ */
+
+; (function () {
   "use strict"
+
+  // ===== Shaders =====
+  const vertexShader = `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = vec4(position, 1.0);
+    }
+  `
+
+  const fragmentShader = `
+    uniform float uTime;
+    uniform vec3 uColor1;
+    uniform vec3 uColor2;
+    uniform vec3 uColor3;
+    uniform vec2 uMouse;
+    varying vec2 vUv;
+
+    // Simplex 2D noise
+    vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+    float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+               -0.577350269189626, 0.024390243902439);
+      vec2 i  = floor(v + dot(v, C.yy) );
+      vec2 x0 = v -   i + dot(i, C.xx);
+      vec2 i1;
+      i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+      vec4 x12 = x0.xyxy + C.xxzz;
+      x12.xy -= i1;
+      i = mod(i, 289.0);
+      vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+      + i.x + vec3(0.0, i1.x, 1.0 ));
+      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+      m = m*m ;
+      m = m*m ;
+      vec3 x = 2.0 * fract(p * C.www) - 1.0;
+      vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5);
+      vec3 a0 = x - ox;
+      m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+      vec3 g;
+      g.x  = a0.x  * x0.x  + h.x  * x0.y;
+      g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
+    }
+
+    void main() {
+      vec2 uv = vUv;
+      
+      // Faster movement for better visibility
+      float time = uTime * 0.4;
+      
+      // Mouse influence
+      vec2 mouseEffect = (uMouse - 0.5) * 0.2;
+      
+      // Create flowing noise layers with more dynamic offsets
+      float n1 = snoise(uv * 1.2 + vec2(time * 0.1, time * 0.15) + mouseEffect);
+      float n2 = snoise(uv * 2.0 - vec2(time * 0.2, time * 0.1) - mouseEffect);
+      float n3 = snoise(uv * 3.0 + vec2(n1, n2) * 0.4 + vec2(time * 0.05));
+      
+      // Mix colors based on noise with sharper transitions
+      float mix1 = smoothstep(-0.6, 0.6, n1);
+      float mix2 = smoothstep(-0.6, 0.6, n2);
+      float mix3 = smoothstep(-0.6, 0.6, n3);
+      
+      vec3 color = mix(uColor1, uColor2, mix1);
+      color = mix(color, uColor3, mix2 * 0.6 + mix3 * 0.2);
+      
+      // Add subtle grain/texture
+      float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+      color += grain * 0.03;
+      
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `
 
   // ===== Three.js Scene Setup =====
   const ThreeScene = {
     scene: null,
     camera: null,
     renderer: null,
-    particleGroups: [],
-    connections: null,
-    mouseX: 0,
-    mouseY: 0,
-    windowHalfX: window.innerWidth / 2,
-    windowHalfY: window.innerHeight / 2,
+    material: null,
     clock: new THREE.Clock(),
+    mouse: new THREE.Vector2(0.5, 0.5),
+    targetMouse: new THREE.Vector2(0.5, 0.5),
 
     init() {
       const canvas = document.getElementById("bg-canvas")
@@ -27,246 +105,77 @@
       }
 
       this.setupScene(canvas)
-      this.createEnhancedParticles()
-      this.createParticleConnections()
-      this.setupLights()
+      this.createPlane()
       this.setupEventListeners()
       this.animate()
     },
 
     setupScene(canvas) {
-      // Scene
       this.scene = new THREE.Scene()
+      this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 
-      // Camera
-      this.camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      )
-      this.camera.position.z = 40
-
-      // Renderer
       this.renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         alpha: true,
-        antialias: true
+        antialias: false // Not needed for shader plane
       })
       this.renderer.setSize(window.innerWidth, window.innerHeight)
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     },
 
-    createEnhancedParticles() {
-      const isDark =
-        document.documentElement.getAttribute("data-theme") === "dark"
-      const isMobile = window.innerWidth < 768
+    getThemeColors() {
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark"
 
-      // Performance-based particle count
-      const baseCount = isMobile ? 300 : 800
-
-      // Color palette - literary warm tones with golden accents
-      const colors = isDark
-        ? [
-            new THREE.Color(0x8a96a3), // Blue-gray
-            new THREE.Color(0xb5a598), // Warm gray
-            new THREE.Color(0xd4af37), // Golden
-            new THREE.Color(0x9c8b7a), // Brown-gray
-            new THREE.Color(0x7d6f61) // Dark brown
-          ]
-        : [
-            new THREE.Color(0x6b7785), // Primary blue-gray
-            new THREE.Color(0x9c8b7a), // Secondary brown-gray
-            new THREE.Color(0xc9a961), // Softer gold
-            new THREE.Color(0x8a96a3), // Light blue-gray
-            new THREE.Color(0xb5a598) // Light warm gray
-          ]
-
-      // Create multiple layers for depth
-      const layers = [
-        {
-          count: Math.floor(baseCount * 0.5),
-          size: 1.5,
-          depth: 60,
-          opacity: 0.7
-        },
-        {
-          count: Math.floor(baseCount * 0.3),
-          size: 2.5,
-          depth: 40,
-          opacity: 0.5
-        },
-        {
-          count: Math.floor(baseCount * 0.2),
-          size: 3.5,
-          depth: 25,
-          opacity: 0.3
+      if (isDark) {
+        return {
+          color1: new THREE.Color(0x1a1a1a), // Dark bg
+          color2: new THREE.Color(0x2d3436), // Dark gray
+          color3: new THREE.Color(0x4a5563)  // Blue gray accent
         }
-      ]
-
-      layers.forEach((layer, layerIndex) => {
-        const positions = new Float32Array(layer.count * 3)
-        const particleColors = new Float32Array(layer.count * 3)
-        const sizes = new Float32Array(layer.count)
-        const velocities = new Float32Array(layer.count * 3)
-
-        for (let i = 0; i < layer.count; i++) {
-          const i3 = i * 3
-
-          // Position with depth layering
-          positions[i3] = (Math.random() - 0.5) * 120
-          positions[i3 + 1] = (Math.random() - 0.5) * 120
-          positions[i3 + 2] = (Math.random() - 0.5) * layer.depth
-
-          // Color variation
-          const color = colors[Math.floor(Math.random() * colors.length)]
-          particleColors[i3] = color.r
-          particleColors[i3 + 1] = color.g
-          particleColors[i3 + 2] = color.b
-
-          // Size variation
-          sizes[i] = layer.size * (0.5 + Math.random() * 0.5)
-
-          // Gentle floating velocities
-          velocities[i3] = (Math.random() - 0.5) * 0.02
-          velocities[i3 + 1] = (Math.random() - 0.5) * 0.02
-          velocities[i3 + 2] = (Math.random() - 0.5) * 0.01
+      } else {
+        return {
+          color1: new THREE.Color(0xfaf9f7), // Light bg
+          color2: new THREE.Color(0xe8e6e3), // Warm gray
+          color3: new THREE.Color(0xd4af37)  // Gold accent (subtle)
         }
-
-        const geometry = new THREE.BufferGeometry()
-        geometry.setAttribute(
-          "position",
-          new THREE.BufferAttribute(positions, 3)
-        )
-        geometry.setAttribute(
-          "color",
-          new THREE.BufferAttribute(particleColors, 3)
-        )
-        geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1))
-
-        const material = new THREE.PointsMaterial({
-          size: layer.size,
-          vertexColors: true,
-          transparent: true,
-          opacity: layer.opacity,
-          blending: THREE.AdditiveBlending,
-          sizeAttenuation: true,
-          depthWrite: false
-        })
-
-        const particles = new THREE.Points(geometry, material)
-        particles.userData.velocities = velocities
-        particles.userData.layerIndex = layerIndex
-        this.scene.add(particles)
-        this.particleGroups.push(particles)
-      })
-    },
-
-    createParticleConnections() {
-      const isDark =
-        document.documentElement.getAttribute("data-theme") === "dark"
-      const connectionColor = isDark ? 0x6b7785 : 0x9c8b7a
-
-      // Create lines connecting nearby particles for technical feel
-      const lineMaterial = new THREE.LineBasicMaterial({
-        color: connectionColor,
-        transparent: true,
-        opacity: 0.15,
-        blending: THREE.AdditiveBlending
-      })
-
-      const lineGeometry = new THREE.BufferGeometry()
-      const linePositions = []
-
-      // Sample particles from first layer for connections
-      if (this.particleGroups[0]) {
-        const positions =
-          this.particleGroups[0].geometry.attributes.position.array
-        const maxConnections = 50
-        const maxDistance = 25
-
-        for (
-          let i = 0;
-          i < Math.min(positions.length / 3, maxConnections);
-          i += 3
-        ) {
-          const x1 = positions[i * 3]
-          const y1 = positions[i * 3 + 1]
-          const z1 = positions[i * 3 + 2]
-
-          for (
-            let j = i + 1;
-            j < Math.min(positions.length / 3, maxConnections);
-            j += 3
-          ) {
-            const x2 = positions[j * 3]
-            const y2 = positions[j * 3 + 1]
-            const z2 = positions[j * 3 + 2]
-
-            const distance = Math.sqrt(
-              Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)
-            )
-
-            if (distance < maxDistance) {
-              linePositions.push(x1, y1, z1)
-              linePositions.push(x2, y2, z2)
-            }
-          }
-        }
-      }
-
-      if (linePositions.length > 0) {
-        lineGeometry.setAttribute(
-          "position",
-          new THREE.Float32BufferAttribute(linePositions, 3)
-        )
-        this.connections = new THREE.LineSegments(lineGeometry, lineMaterial)
-        this.scene.add(this.connections)
       }
     },
 
-    setupLights() {
-      const isDark =
-        document.documentElement.getAttribute("data-theme") === "dark"
+    createPlane() {
+      const geometry = new THREE.PlaneGeometry(2, 2)
+      const colors = this.getThemeColors()
 
-      // Ambient light
-      const ambientLight = new THREE.AmbientLight(0xffffff, isDark ? 0.3 : 0.4)
-      this.scene.add(ambientLight)
+      this.material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          uTime: { value: 0 },
+          uColor1: { value: colors.color1 },
+          uColor2: { value: colors.color2 },
+          uColor3: { value: colors.color3 },
+          uMouse: { value: new THREE.Vector2(0.5, 0.5) }
+        }
+      })
 
-      // Warm point light for literary feel
-      const warmLight = new THREE.PointLight(0xffd4a3, isDark ? 0.5 : 0.3)
-      warmLight.position.set(20, 20, 20)
-      this.scene.add(warmLight)
-
-      // Secondary cool light for depth
-      const coolLight = new THREE.PointLight(0x9cb4cc, isDark ? 0.3 : 0.2)
-      coolLight.position.set(-20, -20, 15)
-      this.scene.add(coolLight)
+      const plane = new THREE.Mesh(geometry, this.material)
+      this.scene.add(plane)
     },
 
     setupEventListeners() {
-      // Smooth mouse tracking
       document.addEventListener("mousemove", (e) => {
-        this.mouseX = (e.clientX - this.windowHalfX) / 150
-        this.mouseY = (e.clientY - this.windowHalfY) / 150
+        this.targetMouse.x = e.clientX / window.innerWidth
+        this.targetMouse.y = 1.0 - (e.clientY / window.innerHeight)
       })
 
-      // Window resize
       window.addEventListener("resize", () => {
-        this.windowHalfX = window.innerWidth / 2
-        this.windowHalfY = window.innerHeight / 2
-
-        this.camera.aspect = window.innerWidth / window.innerHeight
-        this.camera.updateProjectionMatrix()
-
         this.renderer.setSize(window.innerWidth, window.innerHeight)
       })
 
-      // Theme change - recreate scene with new colors
+      // Theme change observer
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (mutation.attributeName === "data-theme") {
-            this.recreateScene()
+            this.updateColors()
           }
         })
       })
@@ -277,25 +186,27 @@
       })
     },
 
-    recreateScene() {
-      // Remove old particles
-      this.particleGroups.forEach((group) => {
-        this.scene.remove(group)
-        group.geometry.dispose()
-        group.material.dispose()
-      })
-      this.particleGroups = []
+    updateColors() {
+      if (!this.material) return
 
-      // Remove old connections
-      if (this.connections) {
-        this.scene.remove(this.connections)
-        this.connections.geometry.dispose()
-        this.connections.material.dispose()
+      const colors = this.getThemeColors()
+
+      // Smoothly transition colors using GSAP if available, otherwise instant
+      if (window.gsap) {
+        gsap.to(this.material.uniforms.uColor1.value, {
+          r: colors.color1.r, g: colors.color1.g, b: colors.color1.b, duration: 1
+        })
+        gsap.to(this.material.uniforms.uColor2.value, {
+          r: colors.color2.r, g: colors.color2.g, b: colors.color2.b, duration: 1
+        })
+        gsap.to(this.material.uniforms.uColor3.value, {
+          r: colors.color3.r, g: colors.color3.g, b: colors.color3.b, duration: 1
+        })
+      } else {
+        this.material.uniforms.uColor1.value.copy(colors.color1)
+        this.material.uniforms.uColor2.value.copy(colors.color2)
+        this.material.uniforms.uColor3.value.copy(colors.color3)
       }
-
-      // Recreate with new theme colors
-      this.createEnhancedParticles()
-      this.createParticleConnections()
     },
 
     animate() {
@@ -303,65 +214,24 @@
 
       const time = this.clock.getElapsedTime()
 
-      // Animate each particle group with unique motion
-      this.particleGroups.forEach((group, index) => {
-        const positions = group.geometry.attributes.position.array
-        const velocities = group.userData.velocities
+      // Smooth mouse interpolation
+      this.mouse.lerp(this.targetMouse, 0.05)
 
-        // Gentle floating animation
-        for (let i = 0; i < positions.length; i += 3) {
-          positions[i] += velocities[i]
-          positions[i + 1] += velocities[i + 1]
-          positions[i + 2] += velocities[i + 2]
-
-          // Breathing effect - subtle size pulsing
-          const breathe = Math.sin(time * 0.5 + i * 0.01) * 0.1 + 1
-
-          // Boundary check with smooth wrapping
-          if (Math.abs(positions[i]) > 60) velocities[i] *= -1
-          if (Math.abs(positions[i + 1]) > 60) velocities[i + 1] *= -1
-          if (Math.abs(positions[i + 2]) > 30) velocities[i + 2] *= -1
-        }
-
-        group.geometry.attributes.position.needsUpdate = true
-
-        // Layer-based rotation for depth
-        const rotationSpeed = 0.0002 * (1 + index * 0.5)
-        group.rotation.x += rotationSpeed
-        group.rotation.y += rotationSpeed * 0.8
-
-        // Mouse interaction with dampening per layer
-        const mouseFactor = 0.00003 * (1 - index * 0.3)
-        group.rotation.x += this.mouseY * mouseFactor
-        group.rotation.y += this.mouseX * mouseFactor
-      })
-
-      // Gently rotate connection lines
-      if (this.connections) {
-        this.connections.rotation.z += 0.0001
-        // Pulse opacity for breathing effect
-        this.connections.material.opacity = 0.1 + Math.sin(time * 0.3) * 0.05
+      if (this.material) {
+        this.material.uniforms.uTime.value = time
+        this.material.uniforms.uMouse.value.copy(this.mouse)
       }
-
-      // Camera movement based on scroll with parallax
-      const scrollY = window.pageYOffset
-      this.camera.position.y = Math.sin(scrollY * 0.001) * 3
-      this.camera.position.x = Math.cos(scrollY * 0.0008) * 2
-
-      // Subtle camera breathing
-      this.camera.position.z = 40 + Math.sin(time * 0.2) * 2
 
       this.renderer.render(this.scene, this.camera)
     }
   }
 
-  // Initialize when DOM is ready
+  // Initialize
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => ThreeScene.init())
   } else {
     ThreeScene.init()
   }
 
-  // Export for external access
   window.ThreeScene = ThreeScene
 })()
