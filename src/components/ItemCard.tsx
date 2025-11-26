@@ -191,6 +191,7 @@ export default function ItemCard({
             <Typography
               variant="body2"
               sx={{
+                whiteSpace: "pre-wrap",
                 lineHeight: 1.9,
                 color: "text.primary",
                 pl: 2,
