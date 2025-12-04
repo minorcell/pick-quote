@@ -108,6 +108,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
                   textAlign: "justify",
                   textIndent: "2em",
                   wordBreak: "break-word",
+                  whiteSpace: "pre-wrap",
                   fontFamily: "'Noto Serif SC', 'Songti SC', serif"
                 }}>
                 {truncateText(item.content, maxLength)}
